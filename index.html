@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Manager - Built by Mr. Muhammad Asim</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header with branding -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600">💰 Invoice Manager</h1>
+            <p class="text-gray-500 mt-2">Created by <span class="font-semibold">Mr. Muhammad Asim</span> | Accounting Student</p>
+            <p class="text-sm text-gray-400 mt-1">Simple invoices. Track money. Free.</p>
+        </div>
+
+        <!-- Buy Me Coffee Button -->
+        <div class="text-center mb-6">
+            <a href="https://ko-fi.com/muhammadasim" target="_blank" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 px-6 rounded-full shadow transition">
+                ☕ Buy Mr. Asim a Coffee
+            </a>
+            <p class="text-xs text-gray-400 mt-1">Support future features → Remove watermark, Export to Excel</p>
+        </div>
+        
+        <!-- Invoice Form -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">📄 Create Invoice</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="clientName" placeholder="Client Name" class="border p-2 rounded">
+                <input type="text" id="itemName" placeholder="Item Name" class="border p-2 rounded">
+                <input type="number" id="quantity" placeholder="Quantity" class="border p-2 rounded">
+                <input type="number" id="price" placeholder="Price" class="border p-2 rounded">
+                <input type="date" id="invoiceDate" class="border p-2 rounded">
+                <button onclick="generateInvoice()" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Generate Invoice</button>
+            </div>
+        </div>
+
+        <!-- Invoice Preview -->
+        <div id="preview" class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="text-right text-xs text-gray-400 mb-2">Created by Mr. Muhammad Asim</div>
+            <h2 class="text-2xl font-bold text-center">INVOICE</h2>
+            <p class="text-center text-gray-600" id="invNum">INV-001</p>
+            <hr class="my-4">
+            <p><strong>Date:</strong> <span id="showDate">—</span></p>
+            <p><strong>Client:</strong> <span id="showClient">—</span></p>
+            <table class="w-full mt-4 border">
+                <tr class="bg-gray-200">
+                    <th class="border p-2">Item</th>
+                    <th class="border p-2">Qty</th>
+                    <th class="border p-2">Price</th>
+                    <th class="border p-2">Total</th>
+                 </tr>
+                 <tr>
+                    <td class="border p-2" id="showItem">—</td>
+                    <td class="border p-2" id="showQty">—</td>
+                    <td class="border p-2" id="showPrice">—</td>
+                    <td class="border p-2" id="showTotal">—</td>
+                 </tr>
+             </table>
+            <p class="text-right text-xl font-bold mt-4">Grand Total: $<span id="showGrand">0</span></p>
+            <div class="text-center mt-6 text-xs text-gray-400">
+                Thank you for your business! | Invoice by Mr. Muhammad Asim
+            </div>
+        </div>
+
+        <div class="text-center mb-8">
+            <button onclick="downloadInvoice()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">📥 Download PDF</button>
+        </div>
+
+        <hr class="my-8">
+
+        <!-- Expense Tracker -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">💸 Track Expenses</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <select id="transType" class="border p-2 rounded">
+                    <option value="Income">💰 Income</option>
+                    <option value="Expense">💸 Expense</option>
+                </select>
+                <input type="text" id="transDesc" placeholder="Description" class="border p-2 rounded">
+                <input type="number" id="transAmount" placeholder="Amount" class="border p-2 rounded">
+                <input type="date" id="transDate" class="border p-2 rounded">
+                <button onclick="addLocalTransaction()" class="bg-blue-600 text-white p-2 rounded col-span-2 hover:bg-blue-700">Add Transaction</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="grid grid-cols-3 gap-4 mt-6">
+            <div class="bg-green-100 p-4 text-center rounded">
+                <p class="text-green-600">Total Income</p>
+                <p class="text-2xl font-bold text-green-700">$<span id="totalInc">0</span></p>
+            </div>
+            <div class="bg-red-100 p-4 text-center rounded">
+                <p class="text-red-600">Total Expense</p>
+                <p class="text-2xl font-bold text-red-700">$<span id="totalExp">0</span></p>
+            </div>
+            <div class="bg-blue-100 p-4 text-center rounded">
+                <p class="text-blue-600">Balance</p>
+                <p class="text-2xl font-bold text-blue-700">$<span id="balance">0</span></p>
+            </div>
+        </div>
+
+        <div id="transactionList" class="mt-6 bg-white rounded-lg shadow p-4">
+            <p class="text-gray-400 text-center">No transactions yet</p>
+        </div>
+    </div>
+
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function generateInvoice() {
+            let client = document.getElementById('clientName').value || "Client";
+            let item = document.getElementById('itemName').value || "Service";
+            let qty = parseFloat(document.getElementById('quantity').value) || 1;
+            let price = parseFloat(document.getElementById('price').value) || 0;
+            let date = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
+            let total = qty * price;
+            let invNum = "INV-" + Math.floor(Math.random() * 10000);
+            
+            document.getElementById('invNum').innerText = invNum;
+            document.getElementById('showDate').innerText = date;
+            document.getElementById('showClient').innerText = client;
+            document.getElementById('showItem').innerText = item;
+            document.getElementById('showQty').innerText = qty;
+            document.getElementById('showPrice').innerText = "$" + price.toLocaleString();
+            document.getElementById('showTotal').innerText = "$" + total.toLocaleString();
+            document.getElementById('showGrand').innerText = total.toLocaleString();
+            
+            alert("✅ Invoice generated!");
+        }
+
+        async function downloadInvoice() {
+            const element = document.getElementById('preview');
+            try {
+                const canvas = await html2canvas(element, { scale: 2 });
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 190;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save("invoice.pdf");
+                alert("✅ PDF downloaded!");
+            } catch(err) {
+                alert("Error: " + err.message);
+            }
+        }
+
+        function addLocalTransaction() {
+            let type = document.getElementById('transType').value;
+            let desc = document.getElementById('transDesc').value;
+            let amount = parseFloat(document.getElementById('transAmount').value);
+            let date = document.getElementById('transDate').value;
+            
+            if(!desc || !amount || !date) {
+                alert("Please fill all fields");
+                return;
+            }
+            
+            transactions.push({ type, description: desc, amount, date });
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            updateDashboard();
+            
+            document.getElementById('transDesc').value = '';
+            document.getElementById('transAmount').value = '';
+            
+            alert("✅ Transaction added!");
+        }
+
+        function updateDashboard() {
+            let totalInc = 0, totalExp = 0;
+            let html = '';
+            
+            for(let t of transactions) {
+                if(t.type === 'Income') totalInc += t.amount;
+                else totalExp += t.amount;
+                html += `<div class="flex justify-between border-b p-2">
+                            <div>
+                                <span class="font-semibold">${t.description}</span>
+                                <span class="text-xs text-gray-400 ml-2">${t.date}</span>
+                            </div>
+                            <span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">
+                                ${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}
+                            </span>
+                         </div>`;
+            }
+            
+            document.getElementById('totalInc').innerText = totalInc.toLocaleString();
+            document.getElementById('totalExp').innerText = totalExp.toLocaleString();
+            document.getElementById('balance').innerText = (totalInc - totalExp).toLocaleString();
+            document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>';
+        }
+        
+        document.getElementById('invoiceDate').valueAsDate = new Date();
+        document.getElementById('transDate').valueAsDate = new Date();
+        updateDashboard();
+    </script>
+</body>
+</html>
