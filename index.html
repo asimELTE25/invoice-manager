@@ -36,25 +36,54 @@
                 <div class="flex gap-3 flex-wrap">
                     <button onclick="showUnlockModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm">🔓 Enter Unlock Code</button>
                     <a href="https://ko-fi.com/s/47e9231e59" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">💛 Buy Pro - $5 (Ko-fi)</a>
-                    <a id="stripeButton" href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm hidden">⚡ Buy Pro - $5 (Stripe)</a>
                 </div>
             </div>
         </div>
 
-        <!-- Invoice Form -->
+        <!-- Invoice Form with Multiple Items -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 no-print">
             <h2 class="text-xl font-bold mb-4 border-l-4 border-blue-600 pl-3">📄 Create Professional Invoice</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Client Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <input type="text" id="clientName" placeholder="Client Name *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
                 <input type="email" id="clientEmail" placeholder="Client Email" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
                 <input type="text" id="clientAddress" placeholder="Client Address" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="text" id="itemName" placeholder="Item/Service Description *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="number" id="quantity" placeholder="Quantity *" value="1" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="number" id="price" placeholder="Unit Price *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="number" id="tax" placeholder="Tax % (e.g., 20)" value="0" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="date" id="invoiceDate" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <input type="date" id="dueDate" placeholder="Due Date" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
-                <textarea id="notes" placeholder="Notes/Payment Instructions" rows="2" class="border p-2 rounded md:col-span-2 focus:ring-2 focus:ring-blue-400"></textarea>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Invoice Status:</label>
+                    <select id="invoiceStatus" class="border p-2 rounded focus:ring-2 focus:ring-blue-400 w-full md:w-1/2">
+                        <option value="Pending">⏳ Pending</option>
+                        <option value="Paid">✅ Paid</option>
+                        <option value="Overdue">⚠️ Overdue</option>
+                        <option value="Cancelled">❌ Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Multiple Items Section -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-gray-700">📦 Invoice Items</h3>
+                    <button type="button" onclick="addInvoiceItem()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">+ Add Item</button>
+                </div>
+                
+                <div id="invoiceItemsContainer" class="space-y-3">
+                    <!-- Item 1 (default) -->
+                    <div class="item-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-3 rounded-lg">
+                        <div class="col-span-5"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-2"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-2"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dates & Notes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="date" id="invoiceDate" class="border p-2 rounded">
+                <input type="date" id="dueDate" placeholder="Due Date" class="border p-2 rounded">
+                <textarea id="notes" placeholder="Notes/Payment Instructions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
                 <button onclick="generateInvoice()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 md:col-span-2 font-semibold">✨ Generate Professional Invoice</button>
             </div>
         </div>
@@ -69,10 +98,9 @@
                         <p class="text-blue-200" id="invNumDisplay">#INV-001</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold">Invoice Manager Pro</p>
-                        <p class="text-sm text-blue-200">Muhammad Asim</p>
-                        <p class="text-sm text-blue-200">Budapest, Hungary</p>
-                        <p class="text-sm text-blue-200">asim@invoicemanager.com</p>
+                        <p class="font-bold">Muhammad Asim</p>
+                        <p class="text-sm text-blue-200">Hungary</p>
+                        <p class="text-sm text-blue-200">asimqazi2004@gmail.com</p>
                     </div>
                 </div>
             </div>
@@ -90,13 +118,15 @@
                         <table class="w-full text-sm">
                             <tr><td class="py-1 text-gray-500">Invoice Date:</td><td class="font-semibold" id="previewInvoiceDate">—</td></tr>
                             <tr><td class="py-1 text-gray-500">Due Date:</td><td class="font-semibold" id="previewDueDate">—</td></tr>
-                            <tr><td class="py-1 text-gray-500">Status:</td><td class="text-green-600 font-semibold" id="previewStatus">Pending</td></tr>
+                            <tr><td class="py-1 text-gray-500">Status:</td>
+                                <td class="font-semibold"><span id="previewStatusBadge" class="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800">Pending</span></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Items Table -->
+            <!-- Items Table (Dynamic) -->
             <div class="p-6">
                 <table class="w-full">
                     <thead>
@@ -108,13 +138,9 @@
                             <th class="text-right py-3">Total</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="previewItemsTableBody">
                         <tr class="border-b">
-                            <td class="py-3" id="previewItemName">—</td>
-                            <td class="text-right py-3" id="previewQty">0</td>
-                            <td class="text-right py-3" id="previewUnitPrice">$0</td>
-                            <td class="text-right py-3" id="previewTaxPercent">0%</td>
-                            <td class="text-right py-3 font-semibold" id="previewItemTotal">$0</td>
+                            <td class="py-3" colspan="5" class="text-center text-gray-400">No items added</td>
                         </tr>
                     </tbody>
                 </table>
@@ -127,11 +153,11 @@
                             <span id="previewSubtotal">$0</span>
                         </div>
                         <div class="flex justify-between py-2 border-b">
-                            <span>Tax (<span id="previewTaxRate">0</span>%):</span>
-                            <span id="previewTaxAmount">$0</span>
+                            <span>Total Tax:</span>
+                            <span id="previewTotalTax">$0</span>
                         </div>
                         <div class="flex justify-between py-2 text-xl font-bold">
-                            <span>Total:</span>
+                            <span>Grand Total:</span>
                             <span id="previewGrandTotal">$0</span>
                         </div>
                     </div>
@@ -142,7 +168,7 @@
                     Thank you for your business!
                 </div>
                 
-                <!-- Watermark (hidden for Pro) -->
+                <!-- Watermark -->
                 <div id="previewWatermark" class="text-center mt-4 pt-4 border-t text-gray-400 text-xs">
                     Created by Muhammad Asim | Invoice Manager Pro
                 </div>
@@ -210,6 +236,54 @@
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let currentInvoiceNum = localStorage.getItem('lastInvoiceNum') || 1;
 
+        // ========== MULTIPLE ITEMS FUNCTIONS ==========
+        function addInvoiceItem() {
+            const container = document.getElementById('invoiceItemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'item-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-3 rounded-lg';
+            newItem.innerHTML = `
+                <div class="col-span-5"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-2"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-2"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function removeItem(button) {
+            const container = document.getElementById('invoiceItemsContainer');
+            if(container.children.length > 1) {
+                button.closest('.item-row').remove();
+            } else {
+                alert("At least one item is required");
+            }
+        }
+
+        function getAllItems() {
+            const items = [];
+            const rows = document.querySelectorAll('#invoiceItemsContainer .item-row');
+            for(let row of rows) {
+                const name = row.querySelector('.item-name').value;
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const tax = parseFloat(row.querySelector('.item-tax').value) || 0;
+                if(name && qty > 0 && price > 0) {
+                    items.push({ name, qty, price, tax });
+                }
+            }
+            return items;
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'Paid': return 'bg-green-100 text-green-800';
+                case 'Overdue': return 'bg-red-100 text-red-800';
+                case 'Cancelled': return 'bg-gray-100 text-gray-800';
+                default: return 'bg-yellow-100 text-yellow-800';
+            }
+        }
+
         function updateProUI() {
             if(isPro) {
                 document.getElementById('proStatusBadge').innerHTML = '💎 PRO VERSION';
@@ -228,15 +302,8 @@
             }
         }
 
-        function showUnlockModal() {
-            document.getElementById('unlockModal').classList.remove('hidden');
-        }
-
-        function closeUnlockModal() {
-            document.getElementById('unlockModal').classList.add('hidden');
-            document.getElementById('unlockCode').value = '';
-        }
-
+        function showUnlockModal() { document.getElementById('unlockModal').classList.remove('hidden'); }
+        function closeUnlockModal() { document.getElementById('unlockModal').classList.add('hidden'); document.getElementById('unlockCode').value = ''; }
         function verifyUnlockCode() {
             const code = document.getElementById('unlockCode').value;
             if(code === PRO_CODE) {
@@ -244,10 +311,10 @@
                 localStorage.setItem('isPro', 'true');
                 updateProUI();
                 closeUnlockModal();
-                alert('✅ Pro unlocked! Your PDFs will no longer have watermarks.');
+                alert('✅ Pro unlocked!');
                 generateInvoice();
             } else {
-                alert('❌ Invalid code. Purchase Pro at ko-fi.com/s/47e9231e59');
+                alert('❌ Invalid code.');
             }
         }
 
@@ -256,18 +323,37 @@
             let clientName = document.getElementById('clientName').value || "Client Name";
             let clientEmail = document.getElementById('clientEmail').value || "";
             let clientAddress = document.getElementById('clientAddress').value || "";
-            let itemName = document.getElementById('itemName').value || "Service";
-            let qty = parseFloat(document.getElementById('quantity').value) || 1;
-            let price = parseFloat(document.getElementById('price').value) || 0;
-            let taxPercent = parseFloat(document.getElementById('tax').value) || 0;
             let invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
             let dueDate = document.getElementById('dueDate').value || "";
             let notes = document.getElementById('notes').value || "Thank you for your business!";
+            let status = document.getElementById('invoiceStatus').value;
             
-            let subtotal = qty * price;
-            let taxAmount = subtotal * (taxPercent / 100);
-            let total = subtotal + taxAmount;
+            let items = getAllItems();
+            if(items.length === 0) {
+                alert("Please add at least one item");
+                return;
+            }
             
+            let subtotal = 0;
+            let totalTax = 0;
+            let itemRowsHtml = '';
+            
+            for(let item of items) {
+                let itemTotal = item.qty * item.price;
+                let itemTax = itemTotal * (item.tax / 100);
+                subtotal += itemTotal;
+                totalTax += itemTax;
+                
+                itemRowsHtml += `<tr class="border-b">
+                    <td class="py-3">${escapeHtml(item.name)}</td>
+                    <td class="text-right py-3">${item.qty}</td>
+                    <td class="text-right py-3">$${item.price.toFixed(2)}</td>
+                    <td class="text-right py-3">${item.tax}%</td>
+                    <td class="text-right py-3 font-semibold">$${(itemTotal + itemTax).toFixed(2)}</td>
+                </tr>`;
+            }
+            
+            let grandTotal = subtotal + totalTax;
             let invoiceNum = "INV-" + String(parseInt(currentInvoiceNum)).padStart(4, '0');
             localStorage.setItem('lastInvoiceNum', parseInt(currentInvoiceNum) + 1);
             currentInvoiceNum = parseInt(currentInvoiceNum) + 1;
@@ -279,18 +365,17 @@
             document.getElementById('previewClientAddress').innerHTML = escapeHtml(clientAddress) || "—";
             document.getElementById('previewInvoiceDate').innerHTML = invoiceDate;
             document.getElementById('previewDueDate').innerHTML = dueDate || "Not set";
-            document.getElementById('previewItemName').innerHTML = escapeHtml(itemName);
-            document.getElementById('previewQty').innerHTML = qty;
-            document.getElementById('previewUnitPrice').innerHTML = "$" + price.toFixed(2);
-            document.getElementById('previewTaxPercent').innerHTML = taxPercent + "%";
-            document.getElementById('previewItemTotal').innerHTML = "$" + subtotal.toFixed(2);
             document.getElementById('previewSubtotal').innerHTML = "$" + subtotal.toFixed(2);
-            document.getElementById('previewTaxRate').innerHTML = taxPercent;
-            document.getElementById('previewTaxAmount').innerHTML = "$" + taxAmount.toFixed(2);
-            document.getElementById('previewGrandTotal').innerHTML = "$" + total.toFixed(2);
+            document.getElementById('previewTotalTax').innerHTML = "$" + totalTax.toFixed(2);
+            document.getElementById('previewGrandTotal').innerHTML = "$" + grandTotal.toFixed(2);
             document.getElementById('previewNotes').innerHTML = escapeHtml(notes);
+            document.getElementById('previewItemsTableBody').innerHTML = itemRowsHtml;
             
-            alert("✅ Professional invoice generated!");
+            let badgeClass = getStatusBadgeClass(status);
+            document.getElementById('previewStatusBadge').innerHTML = status;
+            document.getElementById('previewStatusBadge').className = `px-2 py-1 rounded text-xs ${badgeClass}`;
+            
+            alert("✅ Professional invoice generated with " + items.length + " item(s)!");
         }
 
         function escapeHtml(str) {
@@ -366,7 +451,6 @@
         document.getElementById('transDate').valueAsDate = new Date();
         updateProUI();
         updateDashboard();
-        generateInvoice();
     </script>
 </body>
 </html>
