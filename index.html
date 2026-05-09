@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice Manager Pro - Muhammad Asim</title>
+    <title>Invoice Manager Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -13,11 +13,6 @@
         }
         .invoice-box {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-        }
-        .company-logo {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 2px;
         }
     </style>
 </head>
@@ -90,30 +85,30 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="date" id="invoiceDate" class="border p-2 rounded">
                 <input type="date" id="dueDate" placeholder="Due Date" class="border p-2 rounded">
-                <textarea id="notes" placeholder="Notes / Payment Instructions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
-                <textarea id="terms" placeholder="Terms & Conditions (e.g., Payment due within 14 days)" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
+                <textarea id="notes" placeholder="Notes" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
+                <textarea id="terms" placeholder="Terms & Conditions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
                 <button onclick="generateInvoice()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 md:col-span-2 font-semibold">✨ Generate Professional Invoice</button>
             </div>
         </div>
 
-        <!-- Invoice Preview - Professional Design with Logo -->
+        <!-- Invoice Preview - Professional Design -->
         <div id="preview" class="invoice-box bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Header with Logo and Company Info -->
+            <!-- Header with Logo and Company Info (No personal name, tax, phone) -->
             <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white p-6">
                 <div class="flex justify-between items-start flex-wrap gap-4">
-                    <!-- Logo Area -->
+                    <!-- Logo Image Area - REPLACE WITH YOUR IMAGE URL -->
                     <div>
-                        <div class="company-logo text-2xl font-bold tracking-wider">INVOICE</div>
-                        <div class="company-logo text-2xl font-bold tracking-wider text-blue-200">MANAGERPRO</div>
+                        <img id="companyLogo" src="" alt="INVOICE MANAGERPRO" class="h-16 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('textLogo').style.display='block'">
+                        <div id="textLogo" class="text-2xl font-bold tracking-wider" style="display:none">
+                            <div>INVOICE</div>
+                            <div class="text-blue-200">MANAGERPRO</div>
+                        </div>
                         <p class="text-blue-200 text-sm mt-2" id="invNumDisplay">#INV-001</p>
                     </div>
-                    <!-- Company Details -->
+                    <!-- Company Details (Only email + Hungary) -->
                     <div class="text-right">
-                        <p class="font-bold text-lg">Muhammad Asim</p>
                         <p class="text-sm text-blue-200">Hungary</p>
                         <p class="text-sm text-blue-200">asimqazi2004@gmail.com</p>
-                        <p class="text-sm text-blue-200 mt-1">📞 +36 (Your Phone)</p>
-                        <p class="text-sm text-blue-200">Tax ID: HU12345678</p>
                     </div>
                 </div>
             </div>
@@ -176,42 +171,18 @@
                     </div>
                 </div>
 
-                <!-- Payment Methods -->
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <p class="font-bold mb-2">💳 Payment Methods</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="font-semibold">Bank Transfer</p>
-                            <p>Bank: OTP Bank</p>
-                            <p>Account Name: Muhammad Asim</p>
-                            <p>IBAN: HU42 1177 3016 1111 1018 0000 0000</p>
-                        </div>
-                        <div>
-                            <p class="font-semibold">Online Payment</p>
-                            <p>PayPal: asimqazi2004@gmail.com</p>
-                            <p>Credit Card: Visa, Mastercard</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notes & Terms -->
+                <!-- Notes & Terms (No Payment Methods) -->
                 <div class="mt-4 p-4 bg-gray-50 rounded-lg text-sm" id="previewNotes">
                     Thank you for your business!
                 </div>
                 <div class="mt-2 p-4 bg-gray-50 rounded-lg text-sm" id="previewTerms">
-                    Terms: Payment due within 14 days. Late payments may incur a $25 fee.
+                    Terms: Payment due within 14 days.
                 </div>
                 
-                <!-- Signature & Watermark -->
+                <!-- Watermark -->
                 <div class="mt-6 pt-4 border-t">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold">Muhammad Asim</p>
-                            <p class="text-xs text-gray-500">Invoice Manager Pro</p>
-                        </div>
-                        <div id="previewWatermark" class="text-right text-xs text-gray-400">
-                            Created by Muhammad Asim
-                        </div>
+                    <div id="previewWatermark" class="text-right text-xs text-gray-400">
+                        Created by Muhammad Asim
                     </div>
                 </div>
             </div>
@@ -277,7 +248,16 @@
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let currentInvoiceNum = localStorage.getItem('lastInvoiceNum') || 1;
 
-        // Multiple Items Functions
+        // ========== SET YOUR LOGO URL HERE ==========
+        // Replace this with your actual logo image URL
+        const LOGO_URL = "";
+        
+        // Load logo when page loads
+        if(LOGO_URL) {
+            document.getElementById('companyLogo').src = LOGO_URL;
+        }
+        // ===========================================
+
         function addInvoiceItem() {
             const container = document.getElementById('invoiceItemsContainer');
             const newItem = document.createElement('div');
@@ -362,7 +342,7 @@
             let invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
             let dueDate = document.getElementById('dueDate').value || "";
             let notes = document.getElementById('notes').value || "Thank you for your business!";
-            let terms = document.getElementById('terms').value || "Terms: Payment due within 14 days. Late payments may incur a $25 fee.";
+            let terms = document.getElementById('terms').value || "Terms: Payment due within 14 days.";
             let status = document.getElementById('invoiceStatus').value;
             
             let items = getAllItems();
