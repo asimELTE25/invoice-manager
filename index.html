@@ -86,18 +86,18 @@
                 <input type="date" id="invoiceDate" class="border p-2 rounded">
                 <input type="date" id="dueDate" placeholder="Due Date" class="border p-2 rounded">
                 <textarea id="notes" placeholder="Notes" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
-                <textarea id="terms" placeholder="Terms & Conditions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
                 <button onclick="generateInvoice()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 md:col-span-2 font-semibold">✨ Generate Professional Invoice</button>
             </div>
         </div>
 
-        <!-- Invoice Preview - Professional Design -->
+        <!-- Invoice Preview -->
         <div id="preview" class="invoice-box bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Header with Logo and Company Info (No personal name, tax, phone) -->
+            <!-- Header with Logo -->
             <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white p-6">
                 <div class="flex justify-between items-start flex-wrap gap-4">
-                    <!-- Logo Image Area - REPLACE WITH YOUR IMAGE URL -->
+                    <!-- Logo Area -->
                     <div>
+                        <!-- IMPORTANT: REPLACE THE LOGO_URL BELOW WITH YOUR DIRECT IMAGE LINK -->
                         <img id="companyLogo" src="" alt="INVOICE MANAGERPRO" class="h-16 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('textLogo').style.display='block'">
                         <div id="textLogo" class="text-2xl font-bold tracking-wider" style="display:none">
                             <div>INVOICE</div>
@@ -105,7 +105,7 @@
                         </div>
                         <p class="text-blue-200 text-sm mt-2" id="invNumDisplay">#INV-001</p>
                     </div>
-                    <!-- Company Details (Only email + Hungary) -->
+                    <!-- Company Details -->
                     <div class="text-right">
                         <p class="text-sm text-blue-200">Hungary</p>
                         <p class="text-sm text-blue-200">asimqazi2004@gmail.com</p>
@@ -113,7 +113,7 @@
                 </div>
             </div>
             
-            <!-- Bill To & Invoice Details -->
+            <!-- Bill To & Dates -->
             <div class="p-6 bg-gray-50 border-b">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -156,89 +156,53 @@
                 <!-- Totals -->
                 <div class="mt-6 flex justify-end">
                     <div class="w-72">
-                        <div class="flex justify-between py-2">
-                            <span>Subtotal:</span>
-                            <span id="previewSubtotal">$0</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b">
-                            <span>Total Tax:</span>
-                            <span id="previewTotalTax">$0</span>
-                        </div>
-                        <div class="flex justify-between py-2 text-xl font-bold">
-                            <span>Grand Total:</span>
-                            <span id="previewGrandTotal">$0</span>
-                        </div>
+                        <div class="flex justify-between py-2"><span>Subtotal:</span><span id="previewSubtotal">$0</span></div>
+                        <div class="flex justify-between py-2 border-b"><span>Total Tax:</span><span id="previewTotalTax">$0</span></div>
+                        <div class="flex justify-between py-2 text-xl font-bold"><span>Grand Total:</span><span id="previewGrandTotal">$0</span></div>
                     </div>
                 </div>
 
-                <!-- Notes & Terms (No Payment Methods) -->
+                <!-- Notes (Terms Removed) -->
                 <div class="mt-4 p-4 bg-gray-50 rounded-lg text-sm" id="previewNotes">
                     Thank you for your business!
-                </div>
-                <div class="mt-2 p-4 bg-gray-50 rounded-lg text-sm" id="previewTerms">
-                    Terms: Payment due within 14 days.
                 </div>
                 
                 <!-- Watermark -->
                 <div class="mt-6 pt-4 border-t">
-                    <div id="previewWatermark" class="text-right text-xs text-gray-400">
-                        Created by Muhammad Asim
-                    </div>
+                    <div id="previewWatermark" class="text-right text-xs text-gray-400">Created by Muhammad Asim</div>
                 </div>
             </div>
         </div>
 
-        <!-- Download Button -->
         <div class="text-center mt-6 no-print">
             <button onclick="downloadInvoice()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold">📥 Download PDF Invoice</button>
         </div>
 
         <hr class="my-8 no-print">
-
-        <!-- Expense Tracker -->
+        <!-- Expense Tracker & Dashboard (keep as before) -->
         <div class="bg-white rounded-xl shadow-lg p-6 no-print">
             <h2 class="text-xl font-bold mb-4 border-l-4 border-green-600 pl-3">💸 Expense Tracker</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select id="transType" class="border p-2 rounded">
-                    <option value="Income">💰 Income</option>
-                    <option value="Expense">💸 Expense</option>
-                </select>
+                <select id="transType" class="border p-2 rounded"><option value="Income">💰 Income</option><option value="Expense">💸 Expense</option></select>
                 <input type="text" id="transDesc" placeholder="Description" class="border p-2 rounded">
                 <input type="number" id="transAmount" placeholder="Amount" class="border p-2 rounded">
                 <input type="date" id="transDate" class="border p-2 rounded">
                 <button onclick="addLocalTransaction()" class="bg-green-600 text-white p-2 rounded md:col-span-2">Add Transaction</button>
             </div>
         </div>
-
-        <!-- Dashboard -->
         <div class="grid grid-cols-3 gap-4 mt-6 no-print">
-            <div class="bg-green-100 p-4 text-center rounded-xl">
-                <p class="text-green-600">Total Income</p>
-                <p class="text-2xl font-bold">$<span id="totalInc">0</span></p>
-            </div>
-            <div class="bg-red-100 p-4 text-center rounded-xl">
-                <p class="text-red-600">Total Expense</p>
-                <p class="text-2xl font-bold">$<span id="totalExp">0</span></p>
-            </div>
-            <div class="bg-blue-100 p-4 text-center rounded-xl">
-                <p class="text-blue-600">Balance</p>
-                <p class="text-2xl font-bold">$<span id="balance">0</span></p>
-            </div>
+            <div class="bg-green-100 p-4 text-center rounded-xl"><p class="text-green-600">Total Income</p><p class="text-2xl font-bold">$<span id="totalInc">0</span></p></div>
+            <div class="bg-red-100 p-4 text-center rounded-xl"><p class="text-red-600">Total Expense</p><p class="text-2xl font-bold">$<span id="totalExp">0</span></p></div>
+            <div class="bg-blue-100 p-4 text-center rounded-xl"><p class="text-blue-600">Balance</p><p class="text-2xl font-bold">$<span id="balance">0</span></p></div>
         </div>
-
         <div id="transactionList" class="mt-6 bg-white rounded-xl shadow-lg p-4 no-print"></div>
     </div>
 
-    <!-- Unlock Modal -->
     <div id="unlockModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
             <h3 class="text-xl font-bold mb-4">Enter Unlock Code</h3>
-            <p class="text-sm mb-4">Get your code after purchasing Pro</p>
             <input type="text" id="unlockCode" placeholder="Enter code" class="w-full border p-2 rounded mb-4">
-            <div class="flex gap-3">
-                <button onclick="verifyUnlockCode()" class="bg-green-600 text-white px-4 py-2 rounded">Verify</button>
-                <button onclick="closeUnlockModal()" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
-            </div>
+            <div class="flex gap-3"><button onclick="verifyUnlockCode()" class="bg-green-600 text-white px-4 py-2 rounded">Verify</button><button onclick="closeUnlockModal()" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button></div>
         </div>
     </div>
 
@@ -248,91 +212,30 @@
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let currentInvoiceNum = localStorage.getItem('lastInvoiceNum') || 1;
 
-        // ========== SET YOUR LOGO URL HERE ==========
-        // Replace this with your actual logo image URL
-        const LOGO_URL = "https://imgur.com/a/a24HLGt";
-        
-        // Load logo when page loads
+        // ========== ⚠️ IMPORTANT: PASTE YOUR DIRECT LOGO LINK HERE ==========
+        // Example: const LOGO_URL = "https://i.imgur.com/YourCode.png";
+        const LOGO_URL = "";
+        // ===================================================================
+
+        // Load logo
         if(LOGO_URL) {
             document.getElementById('companyLogo').src = LOGO_URL;
         }
-        // ===========================================
 
-        function addInvoiceItem() {
+        function addInvoiceItem() { /* ... (keep original function logic) ... */ 
             const container = document.getElementById('invoiceItemsContainer');
             const newItem = document.createElement('div');
             newItem.className = 'item-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-3 rounded-lg';
-            newItem.innerHTML = `
-                <div class="col-span-4"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-3"><textarea placeholder="Description" rows="1" class="item-desc w-full border p-2 rounded text-sm resize-none"></textarea></div>
-                <div class="col-span-1"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-1"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>
-            `;
+            newItem.innerHTML = `<div class="col-span-4"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div><div class="col-span-3"><textarea placeholder="Description" rows="1" class="item-desc w-full border p-2 rounded text-sm resize-none"></textarea></div><div class="col-span-1"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div><div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div><div class="col-span-1"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div><div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>`;
             container.appendChild(newItem);
         }
-
-        function removeItem(button) {
-            const container = document.getElementById('invoiceItemsContainer');
-            if(container.children.length > 1) button.closest('.item-row').remove();
-            else alert("At least one item is required");
-        }
-
-        function getAllItems() {
-            const items = [];
-            const rows = document.querySelectorAll('#invoiceItemsContainer .item-row');
-            for(let row of rows) {
-                const name = row.querySelector('.item-name').value;
-                const desc = row.querySelector('.item-desc').value;
-                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-                const price = parseFloat(row.querySelector('.item-price').value) || 0;
-                const tax = parseFloat(row.querySelector('.item-tax').value) || 0;
-                if(name && qty > 0 && price > 0) items.push({ name, desc, qty, price, tax });
-            }
-            return items;
-        }
-
-        function getStatusBadgeClass(status) {
-            switch(status) {
-                case 'Paid': return 'bg-green-100 text-green-800';
-                case 'Overdue': return 'bg-red-100 text-red-800';
-                case 'Cancelled': return 'bg-gray-100 text-gray-800';
-                default: return 'bg-yellow-100 text-yellow-800';
-            }
-        }
-
-        function updateProUI() {
-            if(isPro) {
-                document.getElementById('proStatusBadge').innerHTML = '💎 PRO VERSION';
-                document.getElementById('proStatusBadge').classList.remove('bg-gray-400');
-                document.getElementById('proStatusBadge').classList.add('bg-green-600');
-                document.getElementById('watermarkWarning')?.classList.add('hidden');
-                document.getElementById('proMessage')?.classList.remove('hidden');
-                document.getElementById('previewWatermark')?.classList.add('hidden');
-            } else {
-                document.getElementById('proStatusBadge').innerHTML = 'FREE VERSION';
-                document.getElementById('proStatusBadge').classList.remove('bg-green-600');
-                document.getElementById('proStatusBadge').classList.add('bg-gray-400');
-                document.getElementById('watermarkWarning')?.classList.remove('hidden');
-                document.getElementById('proMessage')?.classList.add('hidden');
-                document.getElementById('previewWatermark')?.classList.remove('hidden');
-            }
-        }
-
+        function removeItem(button) { if(document.getElementById('invoiceItemsContainer').children.length > 1) button.closest('.item-row').remove(); else alert("At least one item is required"); }
+        function getAllItems() { const items = []; const rows = document.querySelectorAll('#invoiceItemsContainer .item-row'); for(let row of rows) { const name = row.querySelector('.item-name').value; const desc = row.querySelector('.item-desc').value; const qty = parseFloat(row.querySelector('.item-qty').value) || 0; const price = parseFloat(row.querySelector('.item-price').value) || 0; const tax = parseFloat(row.querySelector('.item-tax').value) || 0; if(name && qty > 0 && price > 0) items.push({ name, desc, qty, price, tax }); } return items; }
+        function getStatusBadgeClass(status) { switch(status) { case 'Paid': return 'bg-green-100 text-green-800'; case 'Overdue': return 'bg-red-100 text-red-800'; case 'Cancelled': return 'bg-gray-100 text-gray-800'; default: return 'bg-yellow-100 text-yellow-800'; } }
+        function updateProUI() { if(isPro) { document.getElementById('proStatusBadge').innerHTML = '💎 PRO VERSION'; document.getElementById('proStatusBadge').classList.remove('bg-gray-400'); document.getElementById('proStatusBadge').classList.add('bg-green-600'); document.getElementById('watermarkWarning')?.classList.add('hidden'); document.getElementById('proMessage')?.classList.remove('hidden'); document.getElementById('previewWatermark')?.classList.add('hidden'); } else { document.getElementById('proStatusBadge').innerHTML = 'FREE VERSION'; document.getElementById('proStatusBadge').classList.remove('bg-green-600'); document.getElementById('proStatusBadge').classList.add('bg-gray-400'); document.getElementById('watermarkWarning')?.classList.remove('hidden'); document.getElementById('proMessage')?.classList.add('hidden'); document.getElementById('previewWatermark')?.classList.remove('hidden'); } }
         function showUnlockModal() { document.getElementById('unlockModal').classList.remove('hidden'); }
         function closeUnlockModal() { document.getElementById('unlockModal').classList.add('hidden'); document.getElementById('unlockCode').value = ''; }
-        function verifyUnlockCode() {
-            if(document.getElementById('unlockCode').value === PRO_CODE) {
-                isPro = true;
-                localStorage.setItem('isPro', 'true');
-                updateProUI();
-                closeUnlockModal();
-                alert('✅ Pro unlocked!');
-                generateInvoice();
-            } else alert('❌ Invalid code.');
-        }
-
+        function verifyUnlockCode() { if(document.getElementById('unlockCode').value === PRO_CODE) { isPro = true; localStorage.setItem('isPro', 'true'); updateProUI(); closeUnlockModal(); alert('✅ Pro unlocked!'); generateInvoice(); } else alert('❌ Invalid code.'); }
         function generateInvoice() {
             let clientName = document.getElementById('clientName').value || "Client Name";
             let clientContactPerson = document.getElementById('clientContactPerson').value || "";
@@ -342,33 +245,15 @@
             let invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
             let dueDate = document.getElementById('dueDate').value || "";
             let notes = document.getElementById('notes').value || "Thank you for your business!";
-            let terms = document.getElementById('terms').value || "Terms: Payment due within 14 days.";
             let status = document.getElementById('invoiceStatus').value;
-            
             let items = getAllItems();
             if(items.length === 0) { alert("Please add at least one item"); return; }
-            
             let subtotal = 0, totalTax = 0, itemRowsHtml = '';
-            for(let item of items) {
-                let itemTotal = item.qty * item.price;
-                let itemTax = itemTotal * (item.tax / 100);
-                subtotal += itemTotal;
-                totalTax += itemTax;
-                let displayDesc = item.desc ? `<br><span class="text-xs text-gray-500">${escapeHtml(item.desc)}</span>` : '';
-                itemRowsHtml += `<tr class="border-b">
-                    <td class="py-3">${escapeHtml(item.name)}${displayDesc}</td>
-                    <td class="text-right py-3">${item.qty}</td>
-                    <td class="text-right py-3">$${item.price.toFixed(2)}</td>
-                    <td class="text-right py-3">${item.tax}%</td>
-                    <td class="text-right py-3 font-semibold">$${(itemTotal + itemTax).toFixed(2)}</td>
-                </tr>`;
-            }
-            
+            for(let item of items) { let itemTotal = item.qty * item.price; let itemTax = itemTotal * (item.tax / 100); subtotal += itemTotal; totalTax += itemTax; let displayDesc = item.desc ? `<br><span class="text-xs text-gray-500">${escapeHtml(item.desc)}</span>` : ''; itemRowsHtml += `<tr class="border-b"><td class="py-3">${escapeHtml(item.name)}${displayDesc}</td><td class="text-right py-3">${item.qty}</td><td class="text-right py-3">$${item.price.toFixed(2)}</td><td class="text-right py-3">${item.tax}%</td><td class="text-right py-3 font-semibold">$${(itemTotal + itemTax).toFixed(2)}</td></tr>`; }
             let grandTotal = subtotal + totalTax;
             let invoiceNum = "INV-" + String(parseInt(currentInvoiceNum)).padStart(4, '0');
             localStorage.setItem('lastInvoiceNum', parseInt(currentInvoiceNum) + 1);
             currentInvoiceNum = parseInt(currentInvoiceNum) + 1;
-            
             document.getElementById('invNumDisplay').innerHTML = "#" + invoiceNum;
             document.getElementById('previewClientName').innerHTML = escapeHtml(clientName);
             document.getElementById('previewClientContactPerson').innerHTML = escapeHtml(clientContactPerson) || "—";
@@ -381,59 +266,16 @@
             document.getElementById('previewTotalTax').innerHTML = "$" + totalTax.toFixed(2);
             document.getElementById('previewGrandTotal').innerHTML = "$" + grandTotal.toFixed(2);
             document.getElementById('previewNotes').innerHTML = escapeHtml(notes);
-            document.getElementById('previewTerms').innerHTML = escapeHtml(terms);
             document.getElementById('previewItemsTableBody').innerHTML = itemRowsHtml;
-            
             let badgeClass = getStatusBadgeClass(status);
             document.getElementById('previewStatusBadge').innerHTML = status;
             document.getElementById('previewStatusBadge').className = `px-2 py-1 rounded text-xs ${badgeClass}`;
-            
             alert("✅ Professional invoice generated with " + items.length + " item(s)!");
         }
-
         function escapeHtml(str) { if(!str) return str; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-
-        async function downloadInvoice() {
-            const element = document.getElementById('preview');
-            try {
-                const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 190;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                pdf.save("invoice.pdf");
-                alert("✅ PDF downloaded!");
-            } catch(err) { alert("Error: " + err.message); }
-        }
-
-        function addLocalTransaction() {
-            let type = document.getElementById('transType').value;
-            let desc = document.getElementById('transDesc').value;
-            let amount = parseFloat(document.getElementById('transAmount').value);
-            let date = document.getElementById('transDate').value;
-            if(!desc || !amount || !date) { alert("Please fill all fields"); return; }
-            transactions.push({ type, description: desc, amount, date });
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            updateDashboard();
-            document.getElementById('transDesc').value = '';
-            document.getElementById('transAmount').value = '';
-            alert("✅ Transaction added!");
-        }
-
-        function updateDashboard() {
-            let totalInc = 0, totalExp = 0, html = '';
-            for(let t of transactions) {
-                if(t.type === 'Income') totalInc += t.amount;
-                else totalExp += t.amount;
-                html += `<div class="flex justify-between border-b p-2"><div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span></div>`;
-            }
-            document.getElementById('totalInc').innerHTML = totalInc.toLocaleString();
-            document.getElementById('totalExp').innerHTML = totalExp.toLocaleString();
-            document.getElementById('balance').innerHTML = (totalInc - totalExp).toLocaleString();
-            document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>';
-        }
+        async function downloadInvoice() { const element = document.getElementById('preview'); try { const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' }); const imgData = canvas.toDataURL('image/png'); const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4'); const imgWidth = 190; const imgHeight = (canvas.height * imgWidth) / canvas.width; pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight); pdf.save("invoice.pdf"); alert("✅ PDF downloaded!"); } catch(err) { alert("Error: " + err.message); } }
+        function addLocalTransaction() { let type = document.getElementById('transType').value; let desc = document.getElementById('transDesc').value; let amount = parseFloat(document.getElementById('transAmount').value); let date = document.getElementById('transDate').value; if(!desc || !amount || !date) { alert("Please fill all fields"); return; } transactions.push({ type, description: desc, amount, date }); localStorage.setItem('transactions', JSON.stringify(transactions)); updateDashboard(); document.getElementById('transDesc').value = ''; document.getElementById('transAmount').value = ''; alert("✅ Transaction added!"); }
+        function updateDashboard() { let totalInc = 0, totalExp = 0, html = ''; for(let t of transactions) { if(t.type === 'Income') totalInc += t.amount; else totalExp += t.amount; html += `<div class="flex justify-between border-b p-2"><div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span></div>`; } document.getElementById('totalInc').innerHTML = totalInc.toLocaleString(); document.getElementById('totalExp').innerHTML = totalExp.toLocaleString(); document.getElementById('balance').innerHTML = (totalInc - totalExp).toLocaleString(); document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>'; }
         
         document.getElementById('invoiceDate').valueAsDate = new Date();
         document.getElementById('transDate').valueAsDate = new Date();
