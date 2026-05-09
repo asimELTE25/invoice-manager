@@ -44,6 +44,17 @@
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 no-print">
             <h2 class="text-xl font-bold mb-4 border-l-4 border-blue-600 pl-3">📄 Create Professional Invoice</h2>
             
+            <!-- Currency Selector -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Select Currency:</label>
+                <select id="currencySelect" class="border p-2 rounded focus:ring-2 focus:ring-blue-400 w-full md:w-1/3">
+                    <option value="USD">💵 US Dollar ($)</option>
+                    <option value="EUR">💶 Euro (€)</option>
+                    <option value="GBP">💷 British Pound (£)</option>
+                    <option value="HUF">🇭🇺 Hungarian Forint (Ft)</option>
+                </select>
+            </div>
+            
             <!-- Client Info -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <input type="text" id="clientName" placeholder="Client Company Name *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
@@ -90,19 +101,17 @@
             </div>
         </div>
 
-        <!-- Invoice Preview with Text Logo (INVOICE MANAGER PRO) -->
+        <!-- Invoice Preview -->
         <div id="preview" class="invoice-box bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Header with Text Logo -->
+            <!-- Header with Logo -->
             <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white p-6">
                 <div class="flex justify-between items-start flex-wrap gap-4">
-                    <!-- Text Logo - INVOICE MANAGER PRO with spaces -->
                     <div>
                         <div class="text-2xl font-bold tracking-wide">
                             INVOICE MANAGER PRO
                         </div>
                         <p class="text-blue-200 text-sm mt-2" id="invNumDisplay">#INV-001</p>
                     </div>
-                    <!-- Company Details -->
                     <div class="text-right">
                         <p class="text-sm text-blue-200">Hungary</p>
                         <p class="text-sm text-blue-200">asimqazi2004@gmail.com</p>
@@ -123,6 +132,7 @@
                     </div>
                     <div class="text-right">
                         <table class="w-full text-sm">
+                            <tr><td class="py-1 text-gray-500">Currency:</td><td class="font-semibold" id="previewCurrency">USD ($)</td></tr>
                             <tr><td class="py-1 text-gray-500">Invoice Date:</td><td class="font-semibold" id="previewInvoiceDate">—</td></tr>
                             <tr><td class="py-1 text-gray-500">Due Date:</td><td class="font-semibold" id="previewDueDate">—</td></tr>
                             <tr><td class="py-1 text-gray-500">Status:</td>
@@ -191,9 +201,9 @@
         
         <!-- Dashboard -->
         <div class="grid grid-cols-3 gap-4 mt-6 no-print">
-            <div class="bg-green-100 p-4 text-center rounded-xl"><p class="text-green-600">Total Income</p><p class="text-2xl font-bold">$<span id="totalInc">0</span></p></div>
-            <div class="bg-red-100 p-4 text-center rounded-xl"><p class="text-red-600">Total Expense</p><p class="text-2xl font-bold">$<span id="totalExp">0</span></p></div>
-            <div class="bg-blue-100 p-4 text-center rounded-xl"><p class="text-blue-600">Balance</p><p class="text-2xl font-bold">$<span id="balance">0</span></p></div>
+            <div class="bg-green-100 p-4 text-center rounded-xl"><p class="text-green-600">Total Income</p><p class="text-2xl font-bold"><span id="totalInc">0</span></p></div>
+            <div class="bg-red-100 p-4 text-center rounded-xl"><p class="text-red-600">Total Expense</p><p class="text-2xl font-bold"><span id="totalExp">0</span></p></div>
+            <div class="bg-blue-100 p-4 text-center rounded-xl"><p class="text-blue-600">Balance</p><p class="text-2xl font-bold"><span id="balance">0</span></p></div>
         </div>
         <div id="transactionList" class="mt-6 bg-white rounded-xl shadow-lg p-4 no-print"></div>
     </div>
@@ -212,6 +222,32 @@
         let isPro = localStorage.getItem('isPro') === 'true';
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let currentInvoiceNum = localStorage.getItem('lastInvoiceNum') || 1;
+
+        // Currency settings
+        const currencies = {
+            USD: { symbol: "$", code: "USD", name: "US Dollar" },
+            EUR: { symbol: "€", code: "EUR", name: "Euro" },
+            GBP: { symbol: "£", code: "GBP", name: "British Pound" },
+            HUF: { symbol: "Ft", code: "HUF", name: "Hungarian Forint" }
+        };
+
+        function getCurrencySymbol() {
+            const currencyCode = document.getElementById('currencySelect').value;
+            return currencies[currencyCode]?.symbol || "$";
+        }
+
+        function getCurrencyCode() {
+            return document.getElementById('currencySelect').value;
+        }
+
+        function formatMoney(amount) {
+            const symbol = getCurrencySymbol();
+            const currencyCode = getCurrencyCode();
+            if (currencyCode === "HUF") {
+                return symbol + " " + Math.round(amount).toLocaleString('hu-HU');
+            }
+            return symbol + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
         function addInvoiceItem() {
             const container = document.getElementById('invoiceItemsContainer');
@@ -244,15 +280,29 @@
             let dueDate = document.getElementById('dueDate').value || "";
             let notes = document.getElementById('notes').value || "Thank you for your business!";
             let status = document.getElementById('invoiceStatus').value;
+            let currencyCode = getCurrencyCode();
+            let currencySymbol = getCurrencySymbol();
+            
             let items = getAllItems();
             if(items.length === 0) { alert("Please add at least one item"); return; }
             let subtotal = 0, totalTax = 0, itemRowsHtml = '';
-            for(let item of items) { let itemTotal = item.qty * item.price; let itemTax = itemTotal * (item.tax / 100); subtotal += itemTotal; totalTax += itemTax; let displayDesc = item.desc ? `<br><span class="text-xs text-gray-500">${escapeHtml(item.desc)}</span>` : ''; itemRowsHtml += `<tr class="border-b"><td class="py-3">${escapeHtml(item.name)}${displayDesc}</td><td class="text-right py-3">${item.qty}</td><td class="text-right py-3">$${item.price.toFixed(2)}</td><td class="text-right py-3">${item.tax}%</td><td class="text-right py-3 font-semibold">$${(itemTotal + itemTax).toFixed(2)}</td></tr>`; }
+            for(let item of items) { 
+                let itemTotal = item.qty * item.price; 
+                let itemTax = itemTotal * (item.tax / 100); 
+                subtotal += itemTotal; 
+                totalTax += itemTax; 
+                let displayDesc = item.desc ? `<br><span class="text-xs text-gray-500">${escapeHtml(item.desc)}</span>` : ''; 
+                let formattedPrice = currencyCode === "HUF" ? currencySymbol + " " + Math.round(item.price).toLocaleString('hu-HU') : currencySymbol + item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                let formattedTotal = currencyCode === "HUF" ? currencySymbol + " " + Math.round(itemTotal + itemTax).toLocaleString('hu-HU') : currencySymbol + (itemTotal + itemTax).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                itemRowsHtml += `<tr class="border-b"><td class="py-3">${escapeHtml(item.name)}${displayDesc}</td><td class="text-right py-3">${item.qty}</td><td class="text-right py-3">${formattedPrice}</td><td class="text-right py-3">${item.tax}%</td><td class="text-right py-3 font-semibold">${formattedTotal}</td></tr>`;
+            }
             let grandTotal = subtotal + totalTax;
             let invoiceNum = "INV-" + String(parseInt(currentInvoiceNum)).padStart(4, '0');
             localStorage.setItem('lastInvoiceNum', parseInt(currentInvoiceNum) + 1);
             currentInvoiceNum = parseInt(currentInvoiceNum) + 1;
+            
             document.getElementById('invNumDisplay').innerHTML = "#" + invoiceNum;
+            document.getElementById('previewCurrency').innerHTML = currencyCode + " (" + currencySymbol + ")";
             document.getElementById('previewClientName').innerHTML = escapeHtml(clientName);
             document.getElementById('previewClientContactPerson').innerHTML = escapeHtml(clientContactPerson) || "—";
             document.getElementById('previewClientEmail').innerHTML = escapeHtml(clientEmail) || "—";
@@ -260,15 +310,15 @@
             document.getElementById('previewClientTaxId').innerHTML = escapeHtml(clientTaxId) || "—";
             document.getElementById('previewInvoiceDate').innerHTML = invoiceDate;
             document.getElementById('previewDueDate').innerHTML = dueDate || "Not set";
-            document.getElementById('previewSubtotal').innerHTML = "$" + subtotal.toFixed(2);
-            document.getElementById('previewTotalTax').innerHTML = "$" + totalTax.toFixed(2);
-            document.getElementById('previewGrandTotal').innerHTML = "$" + grandTotal.toFixed(2);
+            document.getElementById('previewSubtotal').innerHTML = formatMoney(subtotal);
+            document.getElementById('previewTotalTax').innerHTML = formatMoney(totalTax);
+            document.getElementById('previewGrandTotal').innerHTML = formatMoney(grandTotal);
             document.getElementById('previewNotes').innerHTML = escapeHtml(notes);
             document.getElementById('previewItemsTableBody').innerHTML = itemRowsHtml;
             let badgeClass = getStatusBadgeClass(status);
             document.getElementById('previewStatusBadge').innerHTML = status;
             document.getElementById('previewStatusBadge').className = `px-2 py-1 rounded text-xs ${badgeClass}`;
-            alert("✅ Professional invoice generated with " + items.length + " item(s)!");
+            alert("✅ Invoice generated with " + items.length + " item(s) in " + currencyCode + "!");
         }
         
         function escapeHtml(str) { if(!str) return str; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
@@ -277,7 +327,7 @@
         
         function addLocalTransaction() { let type = document.getElementById('transType').value; let desc = document.getElementById('transDesc').value; let amount = parseFloat(document.getElementById('transAmount').value); let date = document.getElementById('transDate').value; if(!desc || !amount || !date) { alert("Please fill all fields"); return; } transactions.push({ type, description: desc, amount, date }); localStorage.setItem('transactions', JSON.stringify(transactions)); updateDashboard(); document.getElementById('transDesc').value = ''; document.getElementById('transAmount').value = ''; alert("✅ Transaction added!"); }
         
-        function updateDashboard() { let totalInc = 0, totalExp = 0, html = ''; for(let t of transactions) { if(t.type === 'Income') totalInc += t.amount; else totalExp += t.amount; html += `<div class="flex justify-between border-b p-2"><div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span></div>`; } document.getElementById('totalInc').innerHTML = totalInc.toLocaleString(); document.getElementById('totalExp').innerHTML = totalExp.toLocaleString(); document.getElementById('balance').innerHTML = (totalInc - totalExp).toLocaleString(); document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>'; }
+        function updateDashboard() { let totalInc = 0, totalExp = 0, html = ''; for(let t of transactions) { if(t.type === 'Income') totalInc += t.amount; else totalExp += t.amount; html += `<div class="flex justify-between border-b p-2"><div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span></div>`; } document.getElementById('totalInc').innerHTML = "$" + totalInc.toLocaleString(); document.getElementById('totalExp').innerHTML = "$" + totalExp.toLocaleString(); document.getElementById('balance').innerHTML = "$" + (totalInc - totalExp).toLocaleString(); document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>'; }
         
         document.getElementById('invoiceDate').valueAsDate = new Date();
         document.getElementById('transDate').valueAsDate = new Date();
