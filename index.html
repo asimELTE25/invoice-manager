@@ -14,6 +14,11 @@
         .invoice-box {
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
+        .company-logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-4 md:p-8">
@@ -40,15 +45,17 @@
             </div>
         </div>
 
-        <!-- Invoice Form with Multiple Items -->
+        <!-- Invoice Form -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 no-print">
             <h2 class="text-xl font-bold mb-4 border-l-4 border-blue-600 pl-3">📄 Create Professional Invoice</h2>
             
             <!-- Client Info -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <input type="text" id="clientName" placeholder="Client Name *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <input type="text" id="clientName" placeholder="Client Company Name *" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <input type="text" id="clientContactPerson" placeholder="Client Contact Person" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
                 <input type="email" id="clientEmail" placeholder="Client Email" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
                 <input type="text" id="clientAddress" placeholder="Client Address" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <input type="text" id="clientTaxId" placeholder="Client Tax ID / VAT" class="border p-2 rounded focus:ring-2 focus:ring-blue-400">
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Invoice Status:</label>
                     <select id="invoiceStatus" class="border p-2 rounded focus:ring-2 focus:ring-blue-400 w-full md:w-1/2">
@@ -68,12 +75,12 @@
                 </div>
                 
                 <div id="invoiceItemsContainer" class="space-y-3">
-                    <!-- Item 1 (default) -->
                     <div class="item-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-3 rounded-lg">
-                        <div class="col-span-5"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
-                        <div class="col-span-2"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-4"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-3"><textarea placeholder="Description (optional)" rows="1" class="item-desc w-full border p-2 rounded text-sm resize-none"></textarea></div>
+                        <div class="col-span-1"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
                         <div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div>
-                        <div class="col-span-2"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
+                        <div class="col-span-1"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
                         <div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>
                     </div>
                 </div>
@@ -83,36 +90,44 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="date" id="invoiceDate" class="border p-2 rounded">
                 <input type="date" id="dueDate" placeholder="Due Date" class="border p-2 rounded">
-                <textarea id="notes" placeholder="Notes/Payment Instructions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
+                <textarea id="notes" placeholder="Notes / Payment Instructions" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
+                <textarea id="terms" placeholder="Terms & Conditions (e.g., Payment due within 14 days)" rows="2" class="border p-2 rounded md:col-span-2"></textarea>
                 <button onclick="generateInvoice()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 md:col-span-2 font-semibold">✨ Generate Professional Invoice</button>
             </div>
         </div>
 
-        <!-- Invoice Preview (Professional Design) -->
+        <!-- Invoice Preview - Professional Design with Logo -->
         <div id="preview" class="invoice-box bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Company Header -->
+            <!-- Header with Logo and Company Info -->
             <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white p-6">
                 <div class="flex justify-between items-start flex-wrap gap-4">
+                    <!-- Logo Area -->
                     <div>
-                        <h1 class="text-3xl font-bold mb-1">INVOICE</h1>
-                        <p class="text-blue-200" id="invNumDisplay">#INV-001</p>
+                        <div class="company-logo text-2xl font-bold tracking-wider">INVOICE</div>
+                        <div class="company-logo text-2xl font-bold tracking-wider text-blue-200">MANAGERPRO</div>
+                        <p class="text-blue-200 text-sm mt-2" id="invNumDisplay">#INV-001</p>
                     </div>
+                    <!-- Company Details -->
                     <div class="text-right">
-                        <p class="font-bold">Muhammad Asim</p>
+                        <p class="font-bold text-lg">Muhammad Asim</p>
                         <p class="text-sm text-blue-200">Hungary</p>
                         <p class="text-sm text-blue-200">asimqazi2004@gmail.com</p>
+                        <p class="text-sm text-blue-200 mt-1">📞 +36 (Your Phone)</p>
+                        <p class="text-sm text-blue-200">Tax ID: HU12345678</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Client & Dates -->
+            <!-- Bill To & Invoice Details -->
             <div class="p-6 bg-gray-50 border-b">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <p class="text-gray-500 text-sm uppercase tracking-wide">Bill To</p>
+                        <p class="text-gray-500 text-sm uppercase tracking-wide mb-2">Bill To</p>
                         <p class="font-semibold" id="previewClientName">—</p>
+                        <p class="text-sm" id="previewClientContactPerson">—</p>
                         <p class="text-sm" id="previewClientEmail">—</p>
                         <p class="text-sm" id="previewClientAddress">—</p>
+                        <p class="text-sm" id="previewClientTaxId">—</p>
                     </div>
                     <div class="text-right">
                         <table class="w-full text-sm">
@@ -126,28 +141,26 @@
                 </div>
             </div>
 
-            <!-- Items Table (Dynamic) -->
+            <!-- Items Table -->
             <div class="p-6">
                 <table class="w-full">
                     <thead>
-                        <tr class="border-b-2 border-gray-200">
-                            <th class="text-left py-3">Item</th>
+                        <tr class="border-b-2 border-gray-200 bg-gray-50">
+                            <th class="text-left py-3">Item / Description</th>
                             <th class="text-right py-3">Qty</th>
                             <th class="text-right py-3">Unit Price</th>
                             <th class="text-right py-3">Tax</th>
-                            <th class="text-right py-3">Total</th>
+                            <th class="text-right py-3">Amount</th>
                         </tr>
                     </thead>
                     <tbody id="previewItemsTableBody">
-                        <tr class="border-b">
-                            <td class="py-3" colspan="5" class="text-center text-gray-400">No items added</td>
-                        </tr>
+                        <tr><td class="py-3 text-center text-gray-400" colspan="5">No items added</td></tr>
                     </tbody>
                 </table>
 
                 <!-- Totals -->
                 <div class="mt-6 flex justify-end">
-                    <div class="w-64">
+                    <div class="w-72">
                         <div class="flex justify-between py-2">
                             <span>Subtotal:</span>
                             <span id="previewSubtotal">$0</span>
@@ -163,14 +176,43 @@
                     </div>
                 </div>
 
-                <!-- Notes -->
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg text-sm" id="previewNotes">
+                <!-- Payment Methods -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <p class="font-bold mb-2">💳 Payment Methods</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="font-semibold">Bank Transfer</p>
+                            <p>Bank: OTP Bank</p>
+                            <p>Account Name: Muhammad Asim</p>
+                            <p>IBAN: HU42 1177 3016 1111 1018 0000 0000</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Online Payment</p>
+                            <p>PayPal: asimqazi2004@gmail.com</p>
+                            <p>Credit Card: Visa, Mastercard</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes & Terms -->
+                <div class="mt-4 p-4 bg-gray-50 rounded-lg text-sm" id="previewNotes">
                     Thank you for your business!
                 </div>
+                <div class="mt-2 p-4 bg-gray-50 rounded-lg text-sm" id="previewTerms">
+                    Terms: Payment due within 14 days. Late payments may incur a $25 fee.
+                </div>
                 
-                <!-- Watermark -->
-                <div id="previewWatermark" class="text-center mt-4 pt-4 border-t text-gray-400 text-xs">
-                    Created by Muhammad Asim | Invoice Manager Pro
+                <!-- Signature & Watermark -->
+                <div class="mt-6 pt-4 border-t">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Muhammad Asim</p>
+                            <p class="text-xs text-gray-500">Invoice Manager Pro</p>
+                        </div>
+                        <div id="previewWatermark" class="text-right text-xs text-gray-400">
+                            Created by Muhammad Asim
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,7 +224,7 @@
 
         <hr class="my-8 no-print">
 
-        <!-- Expense Tracker (Simple for now) -->
+        <!-- Expense Tracker -->
         <div class="bg-white rounded-xl shadow-lg p-6 no-print">
             <h2 class="text-xl font-bold mb-4 border-l-4 border-green-600 pl-3">💸 Expense Tracker</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -230,22 +272,22 @@
     </div>
 
     <script>
-        // ========== PRO SYSTEM ==========
         const PRO_CODE = "ASIMPRO2025";
         let isPro = localStorage.getItem('isPro') === 'true';
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let currentInvoiceNum = localStorage.getItem('lastInvoiceNum') || 1;
 
-        // ========== MULTIPLE ITEMS FUNCTIONS ==========
+        // Multiple Items Functions
         function addInvoiceItem() {
             const container = document.getElementById('invoiceItemsContainer');
             const newItem = document.createElement('div');
             newItem.className = 'item-row grid grid-cols-12 gap-2 items-center bg-gray-50 p-3 rounded-lg';
             newItem.innerHTML = `
-                <div class="col-span-5"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-2"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-4"><input type="text" placeholder="Item name" class="item-name w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-3"><textarea placeholder="Description" rows="1" class="item-desc w-full border p-2 rounded text-sm resize-none"></textarea></div>
+                <div class="col-span-1"><input type="number" placeholder="Qty" value="1" class="item-qty w-full border p-2 rounded text-sm"></div>
                 <div class="col-span-2"><input type="number" placeholder="Price" class="item-price w-full border p-2 rounded text-sm"></div>
-                <div class="col-span-2"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
+                <div class="col-span-1"><input type="number" placeholder="Tax %" value="0" class="item-tax w-full border p-2 rounded text-sm"></div>
                 <div class="col-span-1"><button onclick="removeItem(this)" class="text-red-500 hover:text-red-700 text-xl font-bold">×</button></div>
             `;
             container.appendChild(newItem);
@@ -253,11 +295,8 @@
 
         function removeItem(button) {
             const container = document.getElementById('invoiceItemsContainer');
-            if(container.children.length > 1) {
-                button.closest('.item-row').remove();
-            } else {
-                alert("At least one item is required");
-            }
+            if(container.children.length > 1) button.closest('.item-row').remove();
+            else alert("At least one item is required");
         }
 
         function getAllItems() {
@@ -265,12 +304,11 @@
             const rows = document.querySelectorAll('#invoiceItemsContainer .item-row');
             for(let row of rows) {
                 const name = row.querySelector('.item-name').value;
+                const desc = row.querySelector('.item-desc').value;
                 const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
                 const price = parseFloat(row.querySelector('.item-price').value) || 0;
                 const tax = parseFloat(row.querySelector('.item-tax').value) || 0;
-                if(name && qty > 0 && price > 0) {
-                    items.push({ name, qty, price, tax });
-                }
+                if(name && qty > 0 && price > 0) items.push({ name, desc, qty, price, tax });
             }
             return items;
         }
@@ -305,47 +343,40 @@
         function showUnlockModal() { document.getElementById('unlockModal').classList.remove('hidden'); }
         function closeUnlockModal() { document.getElementById('unlockModal').classList.add('hidden'); document.getElementById('unlockCode').value = ''; }
         function verifyUnlockCode() {
-            const code = document.getElementById('unlockCode').value;
-            if(code === PRO_CODE) {
+            if(document.getElementById('unlockCode').value === PRO_CODE) {
                 isPro = true;
                 localStorage.setItem('isPro', 'true');
                 updateProUI();
                 closeUnlockModal();
                 alert('✅ Pro unlocked!');
                 generateInvoice();
-            } else {
-                alert('❌ Invalid code.');
-            }
+            } else alert('❌ Invalid code.');
         }
 
-        // ========== INVOICE GENERATION ==========
         function generateInvoice() {
             let clientName = document.getElementById('clientName').value || "Client Name";
+            let clientContactPerson = document.getElementById('clientContactPerson').value || "";
             let clientEmail = document.getElementById('clientEmail').value || "";
             let clientAddress = document.getElementById('clientAddress').value || "";
+            let clientTaxId = document.getElementById('clientTaxId').value || "";
             let invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
             let dueDate = document.getElementById('dueDate').value || "";
             let notes = document.getElementById('notes').value || "Thank you for your business!";
+            let terms = document.getElementById('terms').value || "Terms: Payment due within 14 days. Late payments may incur a $25 fee.";
             let status = document.getElementById('invoiceStatus').value;
             
             let items = getAllItems();
-            if(items.length === 0) {
-                alert("Please add at least one item");
-                return;
-            }
+            if(items.length === 0) { alert("Please add at least one item"); return; }
             
-            let subtotal = 0;
-            let totalTax = 0;
-            let itemRowsHtml = '';
-            
+            let subtotal = 0, totalTax = 0, itemRowsHtml = '';
             for(let item of items) {
                 let itemTotal = item.qty * item.price;
                 let itemTax = itemTotal * (item.tax / 100);
                 subtotal += itemTotal;
                 totalTax += itemTax;
-                
+                let displayDesc = item.desc ? `<br><span class="text-xs text-gray-500">${escapeHtml(item.desc)}</span>` : '';
                 itemRowsHtml += `<tr class="border-b">
-                    <td class="py-3">${escapeHtml(item.name)}</td>
+                    <td class="py-3">${escapeHtml(item.name)}${displayDesc}</td>
                     <td class="text-right py-3">${item.qty}</td>
                     <td class="text-right py-3">$${item.price.toFixed(2)}</td>
                     <td class="text-right py-3">${item.tax}%</td>
@@ -358,17 +389,19 @@
             localStorage.setItem('lastInvoiceNum', parseInt(currentInvoiceNum) + 1);
             currentInvoiceNum = parseInt(currentInvoiceNum) + 1;
             
-            // Update preview
-            document.getElementById('invNumDisplay').innerText = "#" + invoiceNum;
+            document.getElementById('invNumDisplay').innerHTML = "#" + invoiceNum;
             document.getElementById('previewClientName').innerHTML = escapeHtml(clientName);
+            document.getElementById('previewClientContactPerson').innerHTML = escapeHtml(clientContactPerson) || "—";
             document.getElementById('previewClientEmail').innerHTML = escapeHtml(clientEmail) || "—";
             document.getElementById('previewClientAddress').innerHTML = escapeHtml(clientAddress) || "—";
+            document.getElementById('previewClientTaxId').innerHTML = escapeHtml(clientTaxId) || "—";
             document.getElementById('previewInvoiceDate').innerHTML = invoiceDate;
             document.getElementById('previewDueDate').innerHTML = dueDate || "Not set";
             document.getElementById('previewSubtotal').innerHTML = "$" + subtotal.toFixed(2);
             document.getElementById('previewTotalTax').innerHTML = "$" + totalTax.toFixed(2);
             document.getElementById('previewGrandTotal').innerHTML = "$" + grandTotal.toFixed(2);
             document.getElementById('previewNotes').innerHTML = escapeHtml(notes);
+            document.getElementById('previewTerms').innerHTML = escapeHtml(terms);
             document.getElementById('previewItemsTableBody').innerHTML = itemRowsHtml;
             
             let badgeClass = getStatusBadgeClass(status);
@@ -378,17 +411,8 @@
             alert("✅ Professional invoice generated with " + items.length + " item(s)!");
         }
 
-        function escapeHtml(str) {
-            if(!str) return str;
-            return str.replace(/[&<>]/g, function(m) {
-                if(m === '&') return '&amp;';
-                if(m === '<') return '&lt;';
-                if(m === '>') return '&gt;';
-                return m;
-            });
-        }
+        function escapeHtml(str) { if(!str) return str; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
-        // ========== PDF DOWNLOAD ==========
         async function downloadInvoice() {
             const element = document.getElementById('preview');
             try {
@@ -401,52 +425,36 @@
                 pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
                 pdf.save("invoice.pdf");
                 alert("✅ PDF downloaded!");
-            } catch(err) {
-                alert("Error: " + err.message);
-            }
+            } catch(err) { alert("Error: " + err.message); }
         }
 
-        // ========== EXPENSE TRACKER ==========
         function addLocalTransaction() {
             let type = document.getElementById('transType').value;
             let desc = document.getElementById('transDesc').value;
             let amount = parseFloat(document.getElementById('transAmount').value);
             let date = document.getElementById('transDate').value;
-            
-            if(!desc || !amount || !date) {
-                alert("Please fill all fields");
-                return;
-            }
-            
+            if(!desc || !amount || !date) { alert("Please fill all fields"); return; }
             transactions.push({ type, description: desc, amount, date });
             localStorage.setItem('transactions', JSON.stringify(transactions));
             updateDashboard();
-            
             document.getElementById('transDesc').value = '';
             document.getElementById('transAmount').value = '';
             alert("✅ Transaction added!");
         }
 
         function updateDashboard() {
-            let totalInc = 0, totalExp = 0;
-            let html = '';
-            
+            let totalInc = 0, totalExp = 0, html = '';
             for(let t of transactions) {
                 if(t.type === 'Income') totalInc += t.amount;
                 else totalExp += t.amount;
-                html += `<div class="flex justify-between border-b p-2">
-                            <div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div>
-                            <span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span>
-                         </div>`;
+                html += `<div class="flex justify-between border-b p-2"><div><span class="font-semibold">${t.description}</span><span class="text-xs text-gray-400 ml-2">${t.date}</span></div><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'} font-bold">${t.type === 'Income' ? '+' : '-'}$${t.amount.toLocaleString()}</span></div>`;
             }
-            
             document.getElementById('totalInc').innerHTML = totalInc.toLocaleString();
             document.getElementById('totalExp').innerHTML = totalExp.toLocaleString();
             document.getElementById('balance').innerHTML = (totalInc - totalExp).toLocaleString();
             document.getElementById('transactionList').innerHTML = html || '<p class="text-gray-400 text-center">No transactions yet</p>';
         }
         
-        // ========== INITIALIZATION ==========
         document.getElementById('invoiceDate').valueAsDate = new Date();
         document.getElementById('transDate').valueAsDate = new Date();
         updateProUI();
