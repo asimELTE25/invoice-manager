@@ -13,15 +13,39 @@
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-blue-600">💰 Invoice Manager</h1>
             <p class="text-gray-500 mt-2">Created by <span class="font-semibold">Mr. Muhammad Asim</span> | Accounting Student</p>
-            <p class="text-sm text-gray-400 mt-1">Simple invoices. Track money. Free.</p>
+            <p class="text-sm text-gray-400 mt-1">Simple invoices. Track money.</p>
         </div>
 
-        <!-- Buy Me Coffee Button -->
-        <div class="text-center mb-6">
-            <a href="https://ko-fi.com/asim185014" target="_blank" class="inline-block bg-yellow-400 hover:bg-yellow-500 font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
-                ☕ Buy Mr. Asim a Coffee
-            </a>
-            <p class="text-xs text-gray-400 mt-1">Support future features → Remove watermark, Export to Excel</p>
+        <!-- Pro Status & Upgrade Section -->
+        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg shadow p-4 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span id="proStatusBadge" class="inline-block bg-gray-400 text-white text-sm px-3 py-1 rounded-full">FREE VERSION</span>
+                    <p id="watermarkWarning" class="text-xs text-gray-600 mt-2">⚠️ PDFs will have a watermark</p>
+                    <p id="proMessage" class="text-xs text-green-600 hidden mt-2">✅ Pro active - No watermark on PDFs!</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="showUnlockModal()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                        🔓 Enter Unlock Code
+                    </button>
+                    <a href="https://ko-fi.com/s/47e9231e59" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm inline-block">
+                        💎 Upgrade to Pro - $5
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unlock Code Modal (Hidden by default) -->
+        <div id="unlockModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4">Enter Unlock Code</h3>
+                <p class="text-sm text-gray-600 mb-4">Purchase Pro at <a href="https://ko-fi.com/s/47e9231e59" target="_blank" class="text-blue-600 underline">ko-fi.com/s/47e9231e59</a> to get your code</p>
+                <input type="text" id="unlockCode" placeholder="Enter your code" class="w-full border p-2 rounded mb-4">
+                <div class="flex gap-3">
+                    <button onclick="verifyUnlockCode()" class="bg-green-600 text-white px-4 py-2 rounded">Verify</button>
+                    <button onclick="closeUnlockModal()" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+                </div>
+            </div>
         </div>
         
         <!-- Invoice Form -->
@@ -39,7 +63,7 @@
 
         <!-- Invoice Preview -->
         <div id="preview" class="bg-white rounded-lg shadow p-6 mb-6">
-            <div class="text-right text-xs text-gray-400 mb-2">Created by Mr. Muhammad Asim</div>
+            <div id="watermarkText" class="text-right text-xs text-gray-400 mb-2">Created by Mr. Muhammad Asim</div>
             <h2 class="text-2xl font-bold text-center">INVOICE</h2>
             <p class="text-center text-gray-600" id="invNum">INV-001</p>
             <hr class="my-4">
@@ -51,7 +75,7 @@
                     <th class="border p-2">Qty</th>
                     <th class="border p-2">Price</th>
                     <th class="border p-2">Total</th>
-                 </tr>
+                </tr>
                  <tr>
                     <td class="border p-2" id="showItem">—</td>
                     <td class="border p-2" id="showQty">—</td>
@@ -60,8 +84,8 @@
                  </tr>
              </table>
             <p class="text-right text-xl font-bold mt-4">Grand Total: $<span id="showGrand">0</span></p>
-            <div class="text-center mt-6 text-xs text-gray-400">
-                Thank you for your business! | Invoice by Mr. Muhammad Asim
+            <div id="footerWatermark" class="text-center mt-6 text-xs text-gray-400">
+                Thank you for your business!
             </div>
         </div>
 
@@ -108,7 +132,54 @@
     </div>
 
     <script>
+        // Pro feature: Unlock code (simple hardcoded for MVP)
+        // After first sale, you can generate unique codes
+        const PRO_CODE = "ASIMPRO2025"; // CHANGE THIS AFTER FIRST SALE
+        
+        let isPro = localStorage.getItem('isPro') === 'true';
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function updateProUI() {
+            if(isPro) {
+                document.getElementById('proStatusBadge').innerHTML = '💎 PRO VERSION';
+                document.getElementById('proStatusBadge').classList.remove('bg-gray-400');
+                document.getElementById('proStatusBadge').classList.add('bg-green-600');
+                document.getElementById('watermarkWarning').classList.add('hidden');
+                document.getElementById('proMessage').classList.remove('hidden');
+                document.getElementById('watermarkText').classList.add('hidden');
+                document.getElementById('footerWatermark').innerHTML = 'Thank you for your business! | Pro Version';
+            } else {
+                document.getElementById('proStatusBadge').innerHTML = 'FREE VERSION';
+                document.getElementById('proStatusBadge').classList.remove('bg-green-600');
+                document.getElementById('proStatusBadge').classList.add('bg-gray-400');
+                document.getElementById('watermarkWarning').classList.remove('hidden');
+                document.getElementById('proMessage').classList.add('hidden');
+                document.getElementById('watermarkText').classList.remove('hidden');
+                document.getElementById('footerWatermark').innerHTML = 'Thank you for your business!';
+            }
+        }
+
+        function showUnlockModal() {
+            document.getElementById('unlockModal').classList.remove('hidden');
+        }
+
+        function closeUnlockModal() {
+            document.getElementById('unlockModal').classList.add('hidden');
+            document.getElementById('unlockCode').value = '';
+        }
+
+        function verifyUnlockCode() {
+            const code = document.getElementById('unlockCode').value;
+            if(code === PRO_CODE) {
+                isPro = true;
+                localStorage.setItem('isPro', 'true');
+                updateProUI();
+                closeUnlockModal();
+                alert('✅ Pro unlocked! Your PDFs will no longer have watermarks.');
+            } else {
+                alert('❌ Invalid code. Purchase Pro at ko-fi.com/s/47e9231e59');
+            }
+        }
 
         function generateInvoice() {
             let client = document.getElementById('clientName').value || "Client";
@@ -195,6 +266,7 @@
         
         document.getElementById('invoiceDate').valueAsDate = new Date();
         document.getElementById('transDate').valueAsDate = new Date();
+        updateProUI();
         updateDashboard();
     </script>
 </body>
