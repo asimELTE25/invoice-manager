@@ -3,395 +3,373 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Finora — Smart Invoice & Expense Tracker</title>
+  <title>Finora — Pro Invoice & Expense Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     * { font-family: 'Inter', sans-serif; }
     body { background: #F9FAFB; }
-    .toast { transition: all 0.3s ease; }
+    .toast { transition: all 0.3s ease; z-index: 1000; }
   </style>
 </head>
 <body class="antialiased">
 
-  <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    
-    <!-- Navbar -->
-    <nav class="flex justify-between items-center py-4 mb-6 border-b border-gray-200/80">
-      <div class="flex items-center space-x-2">
-        <i class="fas fa-chart-line text-indigo-600 text-2xl"></i>
-        <span class="font-bold text-2xl tracking-tight bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-transparent">Finora</span>
-        <span class="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Beta</span>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span id="trialBadge" class="text-sm bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium shadow-sm">🆓 Free uses left: <span id="trialCount">5</span></span>
-        <button id="signupBtn" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition">Sign Up / Login</button>
-        <button id="upgradeProBtn" class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition">Upgrade to Pro</button>
-      </div>
-    </nav>
-
-    <!-- Signup Modal (Fixed) -->
-    <div id="signupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold mb-2">Create your free account</h3>
-        <p class="text-gray-500 text-sm mb-4">Sign up to unlock unlimited basic usage</p>
-        <input type="text" id="signupName" placeholder="Your name" class="w-full border rounded-xl p-3 mb-3">
-        <input type="email" id="signupEmail" placeholder="Your email address" class="w-full border rounded-xl p-3 mb-4">
-        <button id="confirmSignupBtn" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold">Sign Up Free</button>
-        <button id="closeModalBtn" class="w-full mt-2 text-gray-400 text-sm py-2">Cancel</button>
-      </div>
+<div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  
+  <!-- Navbar -->
+  <nav class="flex flex-wrap justify-between items-center py-4 mb-6 border-b border-gray-200/80 gap-4">
+    <div class="flex items-center space-x-2">
+      <i class="fas fa-chart-line text-indigo-600 text-2xl"></i>
+      <span class="font-bold text-2xl tracking-tight bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-transparent">Finora</span>
+      <span class="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Pro</span>
     </div>
-
-    <!-- Tabs -->
-    <div class="flex space-x-2 border-b border-gray-200 pb-2 mb-8">
-      <button data-tab="dashboard" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-indigo-600 text-white shadow-sm">📊 Dashboard</button>
-      <button data-tab="invoice" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-white text-gray-600 hover:bg-gray-100">📄 Invoice Generator</button>
-      <button data-tab="pricing" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-white text-gray-600 hover:bg-gray-100">💎 Pricing & Features</button>
+    <div class="flex items-center space-x-4 flex-wrap gap-2">
+      <span id="trialBadge" class="text-sm bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium shadow-sm">🆓 Free uses left: <span id="trialCount">5</span></span>
+      <button id="signupBtn" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition">Sign Up</button>
+      <button id="unlockProBtn" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition">🔓 Unlock Pro</button>
+      <button id="upgradeProBtn" class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition">💎 Upgrade to Pro</button>
     </div>
+  </nav>
 
-    <!-- Dashboard Panel -->
-    <div id="dashboardPanel" class="tab-panel">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div class="flex items-center justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-emerald-500"></i></div>
-          <p class="text-3xl font-bold mt-2">$<span id="totalIncome">0</span></p>
-        </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div class="flex items-center justify-between"><span class="text-gray-500 text-sm">Total Expenses</span><i class="fas fa-arrow-down text-rose-500"></i></div>
-          <p class="text-3xl font-bold mt-2">$<span id="totalExpense">0</span></p>
-        </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div class="flex items-center justify-between"><span class="text-gray-500 text-sm">Net Balance</span><i class="fas fa-wallet text-indigo-500"></i></div>
-          <p class="text-3xl font-bold mt-2">$<span id="netBalance">0</span></p>
-        </div>
-      </div>
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 class="text-lg font-semibold mb-4">Recent Transactions</h3>
-        <div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"><p class="text-gray-400 text-center py-4">No transactions yet</p></div>
-      </div>
-      <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-500 border-t pt-6">
-        <span><i class="fas fa-shield-alt text-indigo-400 mr-1"></i> Secure with Supabase</span>
-        <span><i class="fas fa-coins text-indigo-400 mr-1"></i> No hidden fees</span>
-        <span><i class="fas fa-graduation-cap text-indigo-400 mr-1"></i> Built by Accounting Student</span>
-      </div>
-    </div>
-
-    <!-- Invoice Panel -->
-    <div id="invoicePanel" class="tab-panel hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-          <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-file-invoice text-indigo-500"></i> New Invoice</h2>
-          <div class="space-y-4 mt-4">
-            <input type="text" id="clientName" placeholder="Client Name *" class="w-full border border-gray-200 rounded-xl p-3">
-            <div id="itemsContainer" class="space-y-3">
-              <div class="item-row grid grid-cols-12 gap-2">
-                <input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm">
-                <input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm">
-                <input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm">
-                <button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button>
-              </div>
-            </div>
-            <button onclick="addInvoiceItem()" class="text-indigo-600 text-sm font-medium"><i class="fas fa-plus-circle"></i> Add item</button>
-            <div class="grid grid-cols-2 gap-3">
-              <input type="date" id="invoiceDate" class="border rounded-xl p-3">
-              <input type="text" id="taxRate" placeholder="Tax % (optional)" value="0" class="border rounded-xl p-3">
-            </div>
-            <textarea id="notes" placeholder="Notes" rows="2" class="w-full border rounded-xl p-3"></textarea>
-            <button id="generateInvoiceBtn" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md">✨ Generate Invoice</button>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-          <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-lg">Invoice Preview</h3><span id="invoiceProMark" class="text-xs">🔓 Free version</span></div>
-          <div id="invoicePreviewContainer" class="bg-white border rounded-xl p-5">
-            <div id="invoicePreview">
-              <div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-indigo-600">Finora</span></div></div>
-              <div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div>
-              <table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody>能有
-              <div class="mt-4 text-right"><p>Subtotal: $<span id="previewSubtotal">0</span></p><p>Tax: $<span id="previewTaxAmt">0</span></p><p class="text-xl font-bold">Grand Total: $<span id="previewGrand">0</span></p></div>
-              <div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div>
-            </div>
-          </div>
-          <button id="downloadPdfBtn" class="mt-5 w-full bg-emerald-600 text-white py-2 rounded-xl">📥 Download PDF</button>
-          <div class="mt-4 text-center text-xs text-gray-400"><span><i class="fas fa-lock text-yellow-500"></i> Pro: Remove watermark</span></div>
-        </div>
-      </div>
-      <div class="mt-10 bg-white rounded-2xl shadow-sm p-6">
-        <h3 class="font-semibold text-lg"><i class="fas fa-receipt text-indigo-500"></i> Expense Tracker</h3>
-        <div class="grid md:grid-cols-4 gap-3 mt-3">
-          <select id="expenseType" class="border rounded-xl p-2"><option value="Income">Income</option><option value="Expense">Expense</option></select>
-          <input type="text" id="expenseDesc" placeholder="Description" class="border rounded-xl p-2">
-          <input type="number" id="expenseAmount" placeholder="Amount" class="border rounded-xl p-2">
-          <input type="date" id="expenseDate" class="border rounded-xl p-2">
-        </div>
-        <button id="addExpenseBtn" class="mt-3 bg-indigo-100 text-indigo-700 px-4 py-2 rounded-xl">+ Add transaction</button>
-      </div>
-    </div>
-
-    <!-- Pricing Panel -->
-    <div id="pricingPanel" class="tab-panel hidden">
-      <div class="max-w-5xl mx-auto text-center mb-12"><h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-transparent">Simple, transparent pricing</h2><p class="text-gray-500 mt-2">Start free, upgrade when you need pro features.</p></div>
-      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-lg p-8"><div class="text-center"><i class="fas fa-seedling text-3xl text-indigo-400"></i><h3 class="text-2xl font-bold mt-2">Free Plan</h3><p class="text-4xl font-bold mt-4">$0</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ 5 free invoices</li><li>✅ Expense tracking</li><li>✅ PDF with watermark</li><li>🔒 No watermark removal</li><li>🔒 Unlimited requires signup</li></ul></div>
-        <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-xl p-8 border border-indigo-200 relative"><div class="absolute -top-3 left-6 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><div class="text-center"><i class="fas fa-crown text-3xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="w-full mt-6 bg-indigo-600 text-white py-2 rounded-xl font-semibold shadow-md">Upgrade to Pro →</button></div>
-      </div>
-      <footer class="mt-16 text-center text-gray-400 text-sm border-t pt-8">Finora — Built with ☕ by Muhammad Asim, Accounting Student</footer>
+  <!-- Signup Modal (Real) -->
+  <div id="signupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold mb-2">Create your free account</h3>
+      <p class="text-gray-500 text-sm mb-4">Sign up to unlock unlimited basic usage</p>
+      <input type="text" id="signupName" placeholder="Your name" class="w-full border rounded-xl p-3 mb-3">
+      <input type="email" id="signupEmail" placeholder="Your email address" class="w-full border rounded-xl p-3 mb-4">
+      <button id="confirmSignupBtn" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold">Sign Up Free</button>
+      <button id="closeModalBtn" class="w-full mt-2 text-gray-400 text-sm py-2">Cancel</button>
     </div>
   </div>
 
-  <script>
-    // === STATE ===
-    let freeUsageCount = parseInt(localStorage.getItem('finora_freeUsage') || '0');
-    let isLoggedIn = localStorage.getItem('finora_loggedIn') === 'true';
-    let isPro = localStorage.getItem('finora_pro') === 'true';
-    let transactions = JSON.parse(localStorage.getItem('finora_transactions') || '[]');
-    let invoiceCounter = parseInt(localStorage.getItem('finora_invoiceCounter') || '1');
+  <!-- Pro Unlock Modal (Enter code after purchase) -->
+  <div id="proUnlockModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold mb-2">Unlock Pro Features</h3>
+      <p class="text-gray-500 text-sm mb-4">Enter your unlock code (sent after $5 payment on Ko-fi)</p>
+      <input type="text" id="unlockCodeInput" placeholder="Unlock code" class="w-full border rounded-xl p-3 mb-4">
+      <button id="verifyUnlockBtn" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold">Verify & Unlock</button>
+      <button id="closeUnlockModalBtn" class="w-full mt-2 text-gray-400 text-sm py-2">Cancel</button>
+    </div>
+  </div>
 
-    // === HELPER FUNCTIONS ===
-    function showToast(msg, type = 'success') {
-      let toast = document.createElement('div');
-      toast.className = `fixed bottom-5 right-5 bg-white shadow-lg rounded-lg px-5 py-3 text-sm z-50 border-l-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
-      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-red-500'}"></i> ${msg}`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2500);
-    }
+  <!-- Tabs -->
+  <div class="flex space-x-2 border-b border-gray-200 pb-2 mb-8 overflow-x-auto">
+    <button data-tab="dashboard" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-indigo-600 text-white shadow-sm">📊 Dashboard</button>
+    <button data-tab="invoice" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-white text-gray-600 hover:bg-gray-100">📄 Invoice Generator</button>
+    <button data-tab="history" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-white text-gray-600 hover:bg-gray-100">📜 Invoice History</button>
+    <button data-tab="pricing" class="tab-btn px-5 py-2 text-sm font-medium rounded-full transition-all bg-white text-gray-600 hover:bg-gray-100">💎 Pricing</button>
+  </div>
 
-    function updateTrialUI() {
-      let remaining = Math.max(0, 5 - freeUsageCount);
-      document.getElementById('trialCount').innerText = remaining;
-      if (isLoggedIn) {
-        document.getElementById('trialBadge').innerHTML = '✅ Basic active (unlimited)';
-      }
-    }
+  <!-- Dashboard Panel -->
+  <div id="dashboardPanel" class="tab-panel">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-emerald-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="totalIncome">0</span></p></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Expenses</span><i class="fas fa-arrow-down text-rose-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="totalExpense">0</span></p></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Net Balance</span><i class="fas fa-wallet text-indigo-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="netBalance">0</span></p></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><h3 class="text-lg font-semibold mb-4">Recent Transactions</h3><div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"><p class="text-gray-400 text-center py-4">No transactions yet</p></div></div>
+    <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-500 border-t pt-6"><span><i class="fas fa-shield-alt text-indigo-400 mr-1"></i> Secure with Supabase</span><span><i class="fas fa-coins text-indigo-400 mr-1"></i> No hidden fees</span><span><i class="fas fa-graduation-cap text-indigo-400 mr-1"></i> Built by Accounting Student</span></div>
+  </div>
 
-    function canUseFeature() {
-      return isLoggedIn || freeUsageCount < 5;
-    }
+  <!-- Invoice Panel -->
+  <div id="invoicePanel" class="tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <h2 class="text-xl font-bold"><i class="fas fa-file-invoice text-indigo-500"></i> New Invoice</h2>
+        <div class="space-y-4 mt-4">
+          <input type="text" id="clientName" placeholder="Client Name *" class="w-full border rounded-xl p-3">
+          <div id="itemsContainer" class="space-y-3"><div class="item-row grid grid-cols-12 gap-2"><input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm"><button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button></div></div>
+          <button onclick="addInvoiceItem()" class="text-indigo-600 text-sm font-medium"><i class="fas fa-plus-circle"></i> Add item</button>
+          <div class="grid grid-cols-2 gap-3"><input type="date" id="invoiceDate" class="border rounded-xl p-3"><input type="text" id="taxRate" placeholder="Tax %" value="0" class="border rounded-xl p-3"></div>
+          <textarea id="notes" placeholder="Notes" rows="2" class="w-full border rounded-xl p-3"></textarea>
+          <button id="generateInvoiceBtn" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md">✨ Generate Invoice</button>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-lg">Invoice Preview</h3><span id="invoiceProMark" class="text-xs">🔓 Free version</span></div>
+        <div id="invoicePreviewContainer" class="bg-white border rounded-xl p-5">
+          <div id="invoicePreview"><div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-indigo-600">Finora</span></div></div><div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div><table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody></table><div class="mt-4 text-right"><p>Subtotal: $<span id="previewSubtotal">0</span></p><p>Tax: $<span id="previewTaxAmt">0</span></p><p class="text-xl font-bold">Grand Total: $<span id="previewGrand">0</span></p></div><div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div></div>
+        </div>
+        <div class="flex gap-3 mt-5"><button id="downloadPdfBtn" class="flex-1 bg-emerald-600 text-white py-2 rounded-xl">📥 PDF</button><button id="emailInvoiceBtn" class="flex-1 bg-indigo-100 text-indigo-700 py-2 rounded-xl">✉️ Email Invoice</button></div>
+        <div class="mt-4 text-center text-xs text-gray-400"><span><i class="fas fa-lock text-yellow-500"></i> Pro: Remove watermark & email</span></div>
+      </div>
+    </div>
+    <div class="mt-10 bg-white rounded-2xl shadow-sm p-6"><h3 class="font-semibold text-lg"><i class="fas fa-receipt text-indigo-500"></i> Expense Tracker</h3><div class="grid md:grid-cols-4 gap-3 mt-3"><select id="expenseType" class="border rounded-xl p-2"><option value="Income">Income</option><option value="Expense">Expense</option></select><input type="text" id="expenseDesc" placeholder="Description" class="border rounded-xl p-2"><input type="number" id="expenseAmount" placeholder="Amount" class="border rounded-xl p-2"><input type="date" id="expenseDate" class="border rounded-xl p-2"></div><button id="addExpenseBtn" class="mt-3 bg-indigo-100 text-indigo-700 px-4 py-2 rounded-xl">+ Add transaction</button></div>
+  </div>
 
-    function incrementUsage() {
-      if (!isLoggedIn) {
-        freeUsageCount++;
-        localStorage.setItem('finora_freeUsage', freeUsageCount);
-        updateTrialUI();
-        return freeUsageCount <= 5;
-      }
-      return true;
-    }
+  <!-- Invoice History Panel -->
+  <div id="historyPanel" class="tab-panel hidden">
+    <div class="bg-white rounded-2xl shadow-md p-6"><h2 class="text-xl font-bold mb-4">📜 Saved Invoices</h2><div id="savedInvoicesList" class="space-y-3 max-h-96 overflow-y-auto"><p class="text-gray-400 text-center py-4">No invoices saved. Generate one and it will appear here.</p></div></div>
+  </div>
 
-    // === SIGNUP MODAL (FIXED) ===
-    const modal = document.getElementById('signupModal');
-    const signupBtn = document.getElementById('signupBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const confirmSignupBtn = document.getElementById('confirmSignupBtn');
+  <!-- Pricing Panel -->
+  <div id="pricingPanel" class="tab-panel hidden">
+    <div class="max-w-5xl mx-auto text-center mb-12"><h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-transparent">Simple, transparent pricing</h2><p class="text-gray-500 mt-2">Start free, upgrade when you need pro features.</p></div>
+    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-lg p-8"><div class="text-center"><i class="fas fa-seedling text-3xl text-indigo-400"></i><h3 class="text-2xl font-bold mt-2">Free Plan</h3><p class="text-4xl font-bold mt-4">$0</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ 5 free invoices (then signup)</li><li>✅ Expense tracking</li><li>✅ PDF with watermark</li><li>🔒 No watermark removal</li><li>🔒 No email sending</li></ul></div>
+      <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-xl p-8 border border-indigo-200 relative"><div class="absolute -top-3 left-6 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><div class="text-center"><i class="fas fa-crown text-3xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history (cloud save)</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="w-full mt-6 bg-indigo-600 text-white py-2 rounded-xl font-semibold shadow-md">Upgrade to Pro →</button></div>
+    </div>
+    <footer class="mt-16 text-center text-gray-400 text-sm border-t pt-8">Finora — Built with ☕ by Muhammad Asim, Accounting Student</footer>
+  </div>
+</div>
 
-    signupBtn.addEventListener('click', () => {
-      modal.classList.remove('hidden');
-    });
+<script>
+  // ======================== STATE ========================
+  let freeUsageCount = parseInt(localStorage.getItem('finora_freeUsage') || '0');
+  let isLoggedIn = localStorage.getItem('finora_loggedIn') === 'true';
+  let isPro = localStorage.getItem('finora_pro') === 'true';
+  let transactions = JSON.parse(localStorage.getItem('finora_transactions') || '[]');
+  let savedInvoices = JSON.parse(localStorage.getItem('finora_invoices') || '[]');
+  let invoiceCounter = parseInt(localStorage.getItem('finora_invoiceCounter') || '1');
 
-    closeModalBtn.addEventListener('click', () => {
-      modal.classList.add('hidden');
-    });
+  // Unlock code (seller provides this after payment on Ko-fi)
+  const PRO_UNLOCK_CODE = "FINORA-PRO-2025";  // CHANGE THIS AFTER FIRST SALE!
 
-    confirmSignupBtn.addEventListener('click', () => {
-      const name = document.getElementById('signupName').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      if (!name || !email) {
-        showToast('Please enter both name and email', 'error');
-        return;
-      }
-      if (!email.includes('@') || !email.includes('.')) {
-        showToast('Please enter a valid email address', 'error');
-        return;
-      }
-      // Perform signup
-      isLoggedIn = true;
-      localStorage.setItem('finora_loggedIn', 'true');
-      localStorage.setItem('finora_userName', name);
-      localStorage.setItem('finora_userEmail', email);
-      // Reset free usage for logged in user
-      freeUsageCount = 0;
-      localStorage.setItem('finora_freeUsage', '0');
-      updateTrialUI();
-      // Close modal
-      modal.classList.add('hidden');
-      // Clear fields
-      document.getElementById('signupName').value = '';
-      document.getElementById('signupEmail').value = '';
-      showToast(`✅ Welcome ${name}! Unlimited basic features unlocked.`);
-    });
+  // Helper functions
+  function showToast(msg, type='success') {
+    let toast = document.createElement('div');
+    toast.className = `fixed bottom-5 right-5 bg-white shadow-lg rounded-lg px-5 py-3 text-sm z-50 border-l-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-red-500'}"></i> ${msg}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
 
-    // === PRO UPGRADE ===
-    const PRO_LINK = "https://ko-fi.com/s/47e9231e59";
-    function upgradeToPro() {
-      window.open(PRO_LINK, '_blank');
-      showToast('🔓 Upgrade to Pro on Ko-fi — $5 one-time', 'info');
-    }
-    document.getElementById('upgradeProBtn').addEventListener('click', upgradeToPro);
-    document.getElementById('pricingProBtn').addEventListener('click', upgradeToPro);
+  function updateTrialUI() {
+    let remaining = Math.max(0, 5 - freeUsageCount);
+    document.getElementById('trialCount').innerText = remaining;
+    if (isLoggedIn) document.getElementById('trialBadge').innerHTML = '✅ Basic active (unlimited)';
+    if (isPro) document.getElementById('trialBadge').innerHTML = '💎 Pro (unlimited + watermark removed)';
+  }
 
-    // === INVOICE ITEMS ===
-    function addInvoiceItem() {
-      let container = document.getElementById('itemsContainer');
-      let newItem = document.createElement('div');
-      newItem.className = 'item-row grid grid-cols-12 gap-2';
-      newItem.innerHTML = `
-        <input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm">
-        <input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm">
-        <input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm">
-        <button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button>
-      `;
-      container.appendChild(newItem);
-    }
+  function canUseFeature() { return isLoggedIn || freeUsageCount < 5; }
+  function incrementUsage() { if (!isLoggedIn) { freeUsageCount++; localStorage.setItem('finora_freeUsage', freeUsageCount); updateTrialUI(); return freeUsageCount <= 5; } return true; }
 
-    window.removeItemRow = (btn) => {
-      if (document.querySelectorAll('.item-row').length > 1) {
-        btn.closest('.item-row').remove();
-      } else {
-        showToast('Keep at least one item', 'error');
-      }
-    };
-
-    // === INVOICE PREVIEW ===
-    function generateInvoicePreview() {
-      let client = document.getElementById('clientName').value || 'Client';
-      let date = document.getElementById('invoiceDate').value || new Date().toISOString().slice(0, 10);
-      let taxPercent = parseFloat(document.getElementById('taxRate').value) || 0;
-      let items = [];
-      let rows = document.querySelectorAll('#itemsContainer .item-row');
-      rows.forEach(row => {
-        let name = row.children[0]?.value;
-        let qty = parseFloat(row.children[1]?.value) || 0;
-        let price = parseFloat(row.children[2]?.value) || 0;
-        if (name && qty > 0 && price > 0) items.push({ name, qty, price });
-      });
-      let subtotal = items.reduce((s, i) => s + (i.qty * i.price), 0);
-      let taxAmt = subtotal * (taxPercent / 100);
-      let grand = subtotal + taxAmt;
-      document.getElementById('previewClient').innerText = client;
-      document.getElementById('previewDate').innerText = date;
-      let tbody = document.getElementById('previewItemsTable');
-      tbody.innerHTML = '';
-      items.forEach(i => {
-        let tot = i.qty * i.price;
-        tbody.innerHTML += `<tr><td class="p-1">${i.name}</td><td class="text-right">${i.qty}</td><td class="text-right">$${i.price.toFixed(2)}</td><td class="text-right">${taxPercent}%</td><td class="text-right">$${tot.toFixed(2)}</td></tr>`;
-      });
-      document.getElementById('previewSubtotal').innerText = subtotal.toFixed(2);
-      document.getElementById('previewTaxAmt').innerText = taxAmt.toFixed(2);
-      document.getElementById('previewGrand').innerText = grand.toFixed(2);
-      let invNum = `#FIN-${String(invoiceCounter).padStart(4, '0')}`;
-      document.getElementById('previewInvNumber').innerText = invNum;
-      if (isPro) {
-        document.getElementById('watermarkText').innerHTML = 'Pro • no watermark';
-        document.getElementById('invoiceProMark').innerHTML = '💎 Pro active';
-      } else {
-        document.getElementById('watermarkText').innerHTML = 'Free version • watermark active';
-        document.getElementById('invoiceProMark').innerHTML = '🔓 Free version';
-      }
-    }
-
-    document.getElementById('generateInvoiceBtn').addEventListener('click', () => {
-      if (!canUseFeature()) {
-        showToast('Free trial limit reached. Sign up to continue.', 'error');
-        return;
-      }
-      incrementUsage();
-      generateInvoicePreview();
-      showToast('✨ Invoice generated!');
-    });
-
-    // === PDF DOWNLOAD ===
-    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
-      if (!canUseFeature() && !isLoggedIn) {
-        showToast('Sign up to download more invoices', 'error');
-        return;
-      }
-      if (!isLoggedIn) incrementUsage();
-      const element = document.getElementById('invoicePreviewContainer');
-      try {
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-        pdf.save('Finora_invoice.pdf');
-        showToast('✅ PDF downloaded!');
-      } catch (err) {
-        showToast('Error generating PDF', 'error');
-      }
-    });
-
-    // === EXPENSE TRACKER ===
-    document.getElementById('addExpenseBtn').addEventListener('click', () => {
-      let type = document.getElementById('expenseType').value;
-      let desc = document.getElementById('expenseDesc').value;
-      let amount = parseFloat(document.getElementById('expenseAmount').value);
-      let date = document.getElementById('expenseDate').value || new Date().toISOString().slice(0, 10);
-      if (!desc || isNaN(amount)) {
-        showToast('Fill description and amount', 'error');
-        return;
-      }
-      transactions.push({ type, desc, amount, date });
-      localStorage.setItem('finora_transactions', JSON.stringify(transactions));
-      updateDashboard();
-      showToast(`${type} added!`);
-      document.getElementById('expenseDesc').value = '';
-      document.getElementById('expenseAmount').value = '';
-    });
-
-    function updateDashboard() {
-      let inc = 0, exp = 0;
-      transactions.forEach(t => {
-        if (t.type === 'Income') inc += t.amount;
-        else exp += t.amount;
-      });
-      document.getElementById('totalIncome').innerText = inc;
-      document.getElementById('totalExpense').innerText = exp;
-      document.getElementById('netBalance').innerText = inc - exp;
-      let list = document.getElementById('transactionsList');
-      if (transactions.length) {
-        list.innerHTML = transactions.slice().reverse().map(t => `
-          <div class="flex justify-between border-b pb-2">
-            <span>${t.desc}</span>
-            <span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'}">${t.type === 'Income' ? '+' : '-'}$${t.amount}</span>
-            <span class="text-xs text-gray-400">${t.date}</span>
-          </div>
-        `).join('');
-      } else {
-        list.innerHTML = '<p class="text-gray-400 text-center py-4">No transactions yet</p>';
-      }
-    }
-
-    // === TAB SWITCHING ===
-    let btns = document.querySelectorAll('.tab-btn');
-    let panels = {
-      dashboard: document.getElementById('dashboardPanel'),
-      invoice: document.getElementById('invoicePanel'),
-      pricing: document.getElementById('pricingPanel')
-    };
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        let tab = btn.getAttribute('data-tab');
-        Object.values(panels).forEach(p => p.classList.add('hidden'));
-        panels[tab]?.classList.remove('hidden');
-        btns.forEach(b => {
-          b.classList.remove('bg-indigo-600', 'text-white');
-          b.classList.add('bg-white', 'text-gray-600');
-        });
-        btn.classList.remove('bg-white', 'text-gray-600');
-        btn.classList.add('bg-indigo-600', 'text-white');
-        if (tab === 'dashboard') updateDashboard();
-        if (tab === 'invoice') generateInvoicePreview();
-      });
-    });
-
-    // === INITIAL LOAD ===
+  // Signup logic
+  const signupModal = document.getElementById('signupModal');
+  document.getElementById('signupBtn').onclick = () => signupModal.classList.remove('hidden');
+  document.getElementById('closeModalBtn').onclick = () => signupModal.classList.add('hidden');
+  document.getElementById('confirmSignupBtn').onclick = () => {
+    let name = document.getElementById('signupName').value.trim();
+    let email = document.getElementById('signupEmail').value.trim();
+    if (!name || !email) { showToast('Please enter name and email', 'error'); return; }
+    if (!email.includes('@')) { showToast('Invalid email', 'error'); return; }
+    isLoggedIn = true;
+    localStorage.setItem('finora_loggedIn', 'true');
+    localStorage.setItem('finora_user', JSON.stringify({name, email}));
+    freeUsageCount = 0; localStorage.setItem('finora_freeUsage', '0');
     updateTrialUI();
-    updateDashboard();
+    signupModal.classList.add('hidden');
+    showToast(`Welcome ${name}! Unlimited basic features unlocked.`);
+  };
+
+  // Pro unlock modal
+  const proUnlockModal = document.getElementById('proUnlockModal');
+  document.getElementById('unlockProBtn').onclick = () => proUnlockModal.classList.remove('hidden');
+  document.getElementById('closeUnlockModalBtn').onclick = () => proUnlockModal.classList.add('hidden');
+  document.getElementById('verifyUnlockBtn').onclick = () => {
+    let code = document.getElementById('unlockCodeInput').value.trim();
+    if (code === PRO_UNLOCK_CODE) {
+      isPro = true;
+      localStorage.setItem('finora_pro', 'true');
+      updateTrialUI();
+      proUnlockModal.classList.add('hidden');
+      showToast('🎉 Pro unlocked! Watermark removed, email invoices enabled.');
+      generateInvoicePreview(); // refresh preview
+    } else {
+      showToast('Invalid unlock code. Please purchase Pro to get a valid code.', 'error');
+    }
+  };
+
+  // Upgrade button (redirects to Ko-fi)
+  const PRO_LINK = "https://ko-fi.com/s/47e9231e59";
+  function upgradeToPro() { window.open(PRO_LINK, '_blank'); showToast('After payment, you will receive an unlock code via email.'); }
+  document.getElementById('upgradeProBtn').onclick = upgradeToPro;
+  document.getElementById('pricingProBtn').onclick = upgradeToPro;
+
+  // Invoice items management
+  function addInvoiceItem() {
+    let container = document.getElementById('itemsContainer');
+    let div = document.createElement('div');
+    div.className = 'item-row grid grid-cols-12 gap-2';
+    div.innerHTML = `<input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm"><button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button>`;
+    container.appendChild(div);
+  }
+  window.removeItemRow = (btn) => { if (document.querySelectorAll('.item-row').length > 1) btn.closest('.item-row').remove(); else showToast('At least one item required', 'error'); };
+
+  function getCurrentInvoiceData() {
+    let client = document.getElementById('clientName').value || 'Client';
+    let date = document.getElementById('invoiceDate').value || new Date().toISOString().slice(0,10);
+    let taxPercent = parseFloat(document.getElementById('taxRate').value) || 0;
+    let items = [];
+    document.querySelectorAll('#itemsContainer .item-row').forEach(row => {
+      let name = row.children[0]?.value;
+      let qty = parseFloat(row.children[1]?.value) || 0;
+      let price = parseFloat(row.children[2]?.value) || 0;
+      if (name && qty && price) items.push({name, qty, price});
+    });
+    let subtotal = items.reduce((s,i) => s + (i.qty*i.price),0);
+    let taxAmt = subtotal * (taxPercent/100);
+    let grand = subtotal + taxAmt;
+    let invNumber = `FIN-${String(invoiceCounter).padStart(4,'0')}`;
+    return { client, date, taxPercent, items, subtotal, taxAmt, grand, invNumber };
+  }
+
+  function generateInvoicePreview() {
+    let data = getCurrentInvoiceData();
+    document.getElementById('previewInvNumber').innerText = '#' + data.invNumber;
+    document.getElementById('previewClient').innerText = data.client;
+    document.getElementById('previewDate').innerText = data.date;
+    let tbody = document.getElementById('previewItemsTable');
+    tbody.innerHTML = '';
+    data.items.forEach(i => {
+      let tot = i.qty * i.price;
+      tbody.innerHTML += `<tr><td class="p-1">${i.name}</td><td class="text-right">${i.qty}</td><td class="text-right">$${i.price.toFixed(2)}</td><td class="text-right">${data.taxPercent}%</td><td class="text-right">$${tot.toFixed(2)}</td></tr>`;
+    });
+    document.getElementById('previewSubtotal').innerText = data.subtotal.toFixed(2);
+    document.getElementById('previewTaxAmt').innerText = data.taxAmt.toFixed(2);
+    document.getElementById('previewGrand').innerText = data.grand.toFixed(2);
+    // Watermark logic based on isPro
+    if (isPro) {
+      document.getElementById('watermarkText').innerHTML = 'Pro • no watermark';
+      document.getElementById('invoiceProMark').innerHTML = '💎 Pro active';
+    } else {
+      document.getElementById('watermarkText').innerHTML = 'Free version • watermark active';
+      document.getElementById('invoiceProMark').innerHTML = '🔓 Free version';
+    }
+  }
+
+  // Save invoice to history
+  function saveCurrentInvoice() {
+    let data = getCurrentInvoiceData();
+    let invoiceRecord = {
+      id: Date.now(),
+      number: data.invNumber,
+      client: data.client,
+      date: data.date,
+      total: data.grand,
+      items: data.items,
+      taxPercent: data.taxPercent,
+      timestamp: new Date().toISOString()
+    };
+    savedInvoices.unshift(invoiceRecord);
+    localStorage.setItem('finora_invoices', JSON.stringify(savedInvoices));
+    localStorage.setItem('finora_invoiceCounter', parseInt(invoiceCounter)+1);
+    invoiceCounter = parseInt(invoiceCounter)+1;
+    showToast('Invoice saved to history');
+    renderInvoiceHistory();
+  }
+
+  function renderInvoiceHistory() {
+    let container = document.getElementById('savedInvoicesList');
+    if (!container) return;
+    if (savedInvoices.length === 0) { container.innerHTML = '<p class="text-gray-400 text-center py-4">No invoices saved. Generate one and it will appear here.</p>'; return; }
+    container.innerHTML = savedInvoices.map(inv => `
+      <div class="border rounded-xl p-4 bg-gray-50 flex flex-wrap justify-between items-center gap-3">
+        <div><span class="font-bold">${inv.number}</span><br><span class="text-xs text-gray-500">${inv.client} | ${inv.date}</span></div>
+        <div><span class="font-semibold">$${inv.total.toFixed(2)}</span></div>
+        <button onclick="viewInvoiceDetails(${inv.id})" class="text-indigo-600 text-sm underline">View</button>
+      </div>
+    `).join('');
+  }
+
+  window.viewInvoiceDetails = (id) => {
+    let inv = savedInvoices.find(i => i.id === id);
+    if (!inv) return;
+    alert(`Invoice ${inv.number}\nClient: ${inv.client}\nDate: ${inv.date}\nTotal: $${inv.total.toFixed(2)}\nItems: ${inv.items.length}`);
+  };
+
+  // Email invoice (simple mailto)
+  function emailCurrentInvoice() {
+    if (!isPro) { showToast('Pro feature: Unlock Pro to send email invoices.', 'error'); return; }
+    let data = getCurrentInvoiceData();
+    let subject = `Invoice ${data.invNumber} from Finora`;
+    let body = `Dear ${data.client},\n\nPlease find your invoice details below:\n\nTotal: $${data.grand.toFixed(2)}\nDate: ${data.date}\n\nThank you for your business.\n\nFinora`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    showToast('Email client opened');
+  }
+
+  // Generate invoice button
+  document.getElementById('generateInvoiceBtn').onclick = () => {
+    if (!canUseFeature()) { showToast('Free trial limit reached. Sign up to continue.', 'error'); return; }
+    incrementUsage();
     generateInvoicePreview();
-  </script>
+    saveCurrentInvoice(); // auto-save to history
+    showToast('✨ Invoice generated and saved!');
+  };
+
+  // PDF download (watermark removal if Pro)
+  document.getElementById('downloadPdfBtn').onclick = async () => {
+    if (!canUseFeature() && !isLoggedIn) { showToast('Sign up to download invoices', 'error'); return; }
+    if (!isLoggedIn) incrementUsage();
+    const element = document.getElementById('invoicePreviewContainer');
+    try {
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 190;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      pdf.save(`Finora_${getCurrentInvoiceData().invNumber}.pdf`);
+      showToast('✅ PDF downloaded');
+    } catch(e) { showToast('Error generating PDF', 'error'); }
+  };
+
+  document.getElementById('emailInvoiceBtn').onclick = emailCurrentInvoice;
+
+  // Expense tracker
+  document.getElementById('addExpenseBtn').onclick = () => {
+    let type = document.getElementById('expenseType').value;
+    let desc = document.getElementById('expenseDesc').value;
+    let amount = parseFloat(document.getElementById('expenseAmount').value);
+    let date = document.getElementById('expenseDate').value || new Date().toISOString().slice(0,10);
+    if (!desc || isNaN(amount)) { showToast('Fill description and amount', 'error'); return; }
+    transactions.push({ type, desc, amount, date });
+    localStorage.setItem('finora_transactions', JSON.stringify(transactions));
+    updateDashboard();
+    showToast(`${type} added!`);
+    document.getElementById('expenseDesc').value = '';
+    document.getElementById('expenseAmount').value = '';
+  };
+
+  function updateDashboard() {
+    let inc = 0, exp = 0;
+    transactions.forEach(t => { if (t.type === 'Income') inc += t.amount; else exp += t.amount; });
+    document.getElementById('totalIncome').innerText = inc;
+    document.getElementById('totalExpense').innerText = exp;
+    document.getElementById('netBalance').innerText = (inc - exp);
+    let list = document.getElementById('transactionsList');
+    if (transactions.length) {
+      list.innerHTML = transactions.slice().reverse().map(t => `<div class="flex justify-between border-b pb-2"><span>${t.desc}</span><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'}">${t.type === 'Income' ? '+' : '-'}$${t.amount}</span><span class="text-xs text-gray-400">${t.date}</span></div>`).join('');
+    } else { list.innerHTML = '<p class="text-gray-400 text-center py-4">No transactions yet</p>'; }
+  }
+
+  // Tab switching
+  let btns = document.querySelectorAll('.tab-btn');
+  let panels = { dashboard: document.getElementById('dashboardPanel'), invoice: document.getElementById('invoicePanel'), history: document.getElementById('historyPanel'), pricing: document.getElementById('pricingPanel') };
+  btns.forEach(btn => {
+    btn.onclick = () => {
+      let tab = btn.getAttribute('data-tab');
+      Object.values(panels).forEach(p => p?.classList.add('hidden'));
+      if (panels[tab]) panels[tab].classList.remove('hidden');
+      btns.forEach(b => { b.classList.remove('bg-indigo-600','text-white'); b.classList.add('bg-white','text-gray-600'); });
+      btn.classList.remove('bg-white','text-gray-600'); btn.classList.add('bg-indigo-600','text-white');
+      if (tab === 'dashboard') updateDashboard();
+      if (tab === 'invoice') generateInvoicePreview();
+      if (tab === 'history') renderInvoiceHistory();
+    };
+  });
+
+  // Initial load
+  updateTrialUI();
+  updateDashboard();
+  generateInvoicePreview();
+  renderInvoiceHistory();
+</script>
 </body>
 </html>
