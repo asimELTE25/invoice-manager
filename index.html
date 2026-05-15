@@ -3,83 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Finora — 3D Isometric Fintech Dashboard</title>
+  <title>Finora — 3D Glassmorphism Invoice Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    * {
-      font-family: 'Inter', sans-serif;
-    }
+    * { font-family: 'Inter', sans-serif; }
     body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #e9eef5 100%);
+      background: radial-gradient(circle at 10% 20%, #f0f4fa 0%, #e2e8f0 100%);
       min-height: 100vh;
-    }
-    /* 3D Isometric Container */
-    .isometric-container {
-      transform-style: preserve-3d;
-      perspective: 1200px;
     }
     /* Glassmorphism Card */
     .glass-card {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(12px);
       border-radius: 32px;
       border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
       transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     .glass-card:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 35px 55px -15px rgba(0, 0, 0, 0.2);
-      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15);
     }
-    /* Floating 3D elements */
-    .floating-card {
-      animation: float 5s ease-in-out infinite;
+    /* Floating shapes background */
+    .floating-shape {
+      position: fixed;
+      background: rgba(59, 130, 246, 0.08);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      animation: float 18s infinite ease-in-out;
     }
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-25px) rotate(5deg); }
     }
+    /* 3D Button */
     .btn-3d {
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      box-shadow: 0 8px 20px -6px rgba(59,130,246,0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 8px 18px -6px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s ease;
     }
     .btn-3d:hover {
       transform: translateY(-2px);
-      box-shadow: 0 15px 25px -8px rgba(59,130,246,0.5);
-    }
-    .btn-outline-3d {
-      background: rgba(255,255,255,0.8);
-      border: 1px solid rgba(59,130,246,0.3);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-    }
-    .btn-outline-3d:hover {
-      background: white;
-      border-color: #3b82f6;
-      transform: translateY(-2px);
+      box-shadow: 0 12px 22px -8px rgba(59, 130, 246, 0.5);
     }
     .stat-card {
       background: white;
       border-radius: 28px;
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(0, 0, 0, 0.03);
+      box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.05);
       transition: all 0.3s ease;
     }
     .stat-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
     }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-    /* PDF hidden template */
+    /* Hide PDF template */
     #pdf-invoice {
       position: fixed;
       left: -9999px;
@@ -93,28 +76,34 @@
 </head>
 <body>
 
-<div class="isometric-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Floating 3D Background Shapes -->
+<div class="floating-shape" style="width: 300px; height: 300px; top: -80px; left: -80px;"></div>
+<div class="floating-shape" style="width: 450px; height: 450px; bottom: -150px; right: -100px; animation-duration: 22s;"></div>
+<div class="floating-shape" style="width: 180px; height: 180px; top: 40%; right: 5%; animation-duration: 14s;"></div>
+<div class="floating-shape" style="width: 220px; height: 220px; bottom: 20%; left: 5%; animation-duration: 26s;"></div>
+
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   
-  <!-- Header / Navbar Glass -->
-  <nav class="glass-card px-6 py-4 mb-10 flex flex-wrap justify-between items-center gap-4 floating-card">
+  <!-- Navbar Glass -->
+  <nav class="glass-card px-6 py-4 mb-10 flex flex-wrap justify-between items-center gap-4">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
         <i class="fas fa-chart-line text-white text-xl"></i>
       </div>
       <span class="text-2xl font-bold bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">Finora</span>
-      <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">3D Dashboard</span>
+      <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">3D Glass</span>
     </div>
     <div class="flex items-center space-x-3 flex-wrap gap-2">
-      <span id="trialBadge" class="text-sm bg-white/80 backdrop-blur text-blue-700 px-3 py-1.5 rounded-full font-medium shadow-sm border border-blue-100">🆓 Free uses: <span id="trialCount" class="font-bold">5</span></span>
-      <button id="signupBtn" class="btn-outline-3d px-4 py-2 rounded-xl text-sm font-medium text-gray-700">Sign Up</button>
-      <button id="unlockProBtn" class="btn-outline-3d px-4 py-2 rounded-xl text-sm font-medium text-amber-600 border-amber-200">🔓 Unlock Pro</button>
-      <button id="upgradeProBtn" class="btn-3d px-5 py-2 rounded-xl text-sm font-medium text-white shadow-md">💎 Upgrade to Pro</button>
+      <span id="trialBadge" class="text-sm bg-white/70 backdrop-blur text-blue-700 px-3 py-1.5 rounded-full font-medium shadow-sm border border-blue-100"> Free uses left: <span id="trialCount" class="font-bold">5</span></span>
+      <button id="signupBtn" class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-white/50 hover:bg-white transition">Sign Up</button>
+      <button id="unlockProBtn" class="px-4 py-2 rounded-xl text-sm font-medium text-amber-600 bg-white/50 hover:bg-white transition border border-amber-200"> Unlock Pro</button>
+      <button id="upgradeProBtn" class="btn-3d px-5 py-2 rounded-xl text-sm font-medium text-white shadow-md"> Upgrade to Pro</button>
     </div>
   </nav>
 
-  <!-- Signup Modal (Glass) -->
-  <div id="signupModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="glass-card p-6 max-w-md w-full mx-4 floating-card">
+  <!-- Signup Modal -->
+  <div id="signupModal" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass-card p-6 max-w-md w-full mx-4">
       <h3 class="text-2xl font-bold mb-2">Create your free account</h3>
       <p class="text-gray-500 text-sm mb-4">Sign up to unlock unlimited basic usage</p>
       <input type="text" id="signupName" placeholder="Your name" class="w-full border border-gray-200 rounded-xl p-3 mb-3 focus:ring-2 focus:ring-blue-400 outline-none">
@@ -125,7 +114,7 @@
   </div>
 
   <!-- Pro Unlock Modal -->
-  <div id="proUnlockModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+  <div id="proUnlockModal" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
     <div class="glass-card p-6 max-w-md w-full mx-4">
       <h3 class="text-2xl font-bold mb-2">Unlock Pro Features</h3>
       <p class="text-gray-500 text-sm mb-4">Enter your unlock code (sent after $5 payment on Ko-fi)</p>
@@ -136,7 +125,7 @@
   </div>
 
   <!-- Tabs Glass -->
-  <div class="glass-card inline-flex p-1.5 mb-8 gap-1.5 w-auto">
+  <div class="glass-card inline-flex p-1.5 mb-8 gap-1.5">
     <button data-tab="dashboard" class="tab-btn px-6 py-2.5 text-sm font-medium rounded-xl transition-all bg-blue-600 text-white shadow-sm">📊 Dashboard</button>
     <button data-tab="invoice" class="tab-btn px-6 py-2.5 text-sm font-medium rounded-xl transition-all text-gray-600 hover:bg-white/50">📄 Invoice Generator</button>
     <button data-tab="history" class="tab-btn px-6 py-2.5 text-sm font-medium rounded-xl transition-all text-gray-600 hover:bg-white/50">📜 Invoice History</button>
@@ -146,9 +135,9 @@
   <!-- Dashboard Panel -->
   <div id="dashboardPanel" class="tab-panel">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="stat-card p-6 floating-card" style="animation-delay: 0s"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Total Income</p><p class="text-3xl font-bold mt-1" id="totalIncomeDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center"><i class="fas fa-arrow-up text-emerald-500 text-xl"></i></div></div></div>
-      <div class="stat-card p-6 floating-card" style="animation-delay: 0.1s"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Total Expenses</p><p class="text-3xl font-bold mt-1" id="totalExpenseDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center"><i class="fas fa-arrow-down text-rose-500 text-xl"></i></div></div></div>
-      <div class="stat-card p-6 floating-card" style="animation-delay: 0.2s"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Net Balance</p><p class="text-3xl font-bold mt-1" id="netBalanceDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center"><i class="fas fa-wallet text-blue-600 text-xl"></i></div></div></div>
+      <div class="stat-card p-6"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Total Income</p><p class="text-3xl font-bold mt-1" id="totalIncomeDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center"><i class="fas fa-arrow-up text-emerald-500 text-xl"></i></div></div></div>
+      <div class="stat-card p-6"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Total Expenses</p><p class="text-3xl font-bold mt-1" id="totalExpenseDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center"><i class="fas fa-arrow-down text-rose-500 text-xl"></i></div></div></div>
+      <div class="stat-card p-6"><div class="flex justify-between items-start"><div><p class="text-gray-500 text-sm">Net Balance</p><p class="text-3xl font-bold mt-1" id="netBalanceDisplay">$0</p></div><div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center"><i class="fas fa-wallet text-blue-600 text-xl"></i></div></div></div>
     </div>
     <div class="glass-card p-6"><h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fas fa-history text-blue-500"></i> Recent Transactions</h3><div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"><p class="text-gray-400 text-center py-6">No transactions yet</p></div></div>
     <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-500"><span><i class="fas fa-shield-alt text-blue-400 mr-1"></i> Secure with Supabase</span><span><i class="fas fa-coins text-blue-400 mr-1"></i> No hidden fees</span><span><i class="fas fa-graduation-cap text-blue-400 mr-1"></i> Built by Accounting Student</span></div>
@@ -157,11 +146,11 @@
   <!-- Invoice Panel -->
   <div id="invoicePanel" class="tab-panel hidden">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Form Column Glass -->
-      <div class="glass-card p-6 floating-card">
+      <!-- Form Column -->
+      <div class="glass-card p-6">
         <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-file-invoice text-blue-500"></i> New Invoice</h2>
         <div class="space-y-4 mt-4">
-          <select id="currencySelect" class="w-full border border-gray-200 rounded-xl p-3 bg-white/80 focus:ring-2 focus:ring-blue-400 outline-none">
+          <select id="currencySelect" class="w-full border border-gray-200 rounded-xl p-3 bg-white/80">
             <option value="USD">💵 USD - US Dollar ($)</option><option value="EUR">💶 EUR - Euro (€)</option><option value="GBP">💷 GBP - British Pound (£)</option>
             <option value="HUF">🇭🇺 HUF - Hungarian Forint (Ft)</option><option value="PKR">🇵🇰 PKR - Pakistani Rupee (₨)</option>
             <option value="INR">🇮🇳 INR - Indian Rupee (₹)</option><option value="JPY">🇯🇵 JPY - Japanese Yen (¥)</option>
@@ -174,7 +163,7 @@
             <option value="AED">🇦🇪 AED - UAE Dirham (د.إ)</option>
           </select>
           <input type="text" id="clientName" placeholder="Client Name *" class="w-full border border-gray-200 rounded-xl p-3 bg-white/80">
-          <div id="itemsContainer" class="space-y-3"><div class="item-row grid grid-cols-12 gap-2"><input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2"><button onclick="removeItemRow(this)" class="col-span-2 text-red-500">🗑️</button></div></div>
+          <div id="itemsContainer" class="space-y-3"><div class="item-row grid grid-cols-12 gap-2"><input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2"><button onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button></div></div>
           <button onclick="addInvoiceItem()" class="text-blue-600 text-sm font-medium"><i class="fas fa-plus-circle"></i> Add item</button>
           <div class="grid grid-cols-2 gap-3"><input type="date" id="invoiceDate" class="border rounded-xl p-3 bg-white/80"><input type="text" id="taxRate" placeholder="Tax %" value="0" class="border rounded-xl p-3 bg-white/80"></div>
           <div class="bg-blue-50/50 rounded-xl p-4 space-y-3 border border-blue-100"><h3 class="font-semibold text-gray-700">💰 Balance & Payment</h3><input type="number" id="previousArrears" placeholder="Previous Arrears" value="0" class="w-full border rounded-xl p-3 bg-white/80"><input type="number" id="paymentReceived" placeholder="Payment Received" value="0" class="w-full border rounded-xl p-3 bg-white/80"><p class="text-xs text-gray-500">Total Due = Arrears + Current Bill | New Balance = Total Due - Payment</p></div>
@@ -183,17 +172,17 @@
         </div>
       </div>
       
-      <!-- Preview Column Glass -->
-      <div class="glass-card p-6 floating-card" style="animation-delay: 0.15s">
-        <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-lg">Invoice Preview</h3><span id="invoiceProMark" class="text-xs bg-gray-100 px-2 py-1 rounded-full">🔓 Free version</span></div>
+      <!-- Preview Column -->
+      <div class="glass-card p-6">
+        <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-lg">Invoice Preview</h3><span id="invoiceProMark" class="text-xs bg-gray-100 px-2 py-1 rounded-full"> Free version</span></div>
         <div id="invoicePreviewContainer" class="bg-white/60 backdrop-blur-sm border border-white/40 rounded-xl p-5">
-          <div id="invoicePreview"><div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-blue-600">Finora</span></div></div><div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div><table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody>能有<div class="mt-4 border-t pt-3 space-y-1 text-sm"><p class="flex justify-between"><span>Previous Arrears:</span><span id="previewArrears">$0.00</span></p><p class="flex justify-between"><span>Current Bill:</span><span id="previewCurrentBill">$0.00</span></p><p class="flex justify-between font-semibold"><span>TOTAL DUE:</span><span id="previewTotalDue">$0.00</span></p><p class="flex justify-between"><span>Payment Received:</span><span id="previewPaymentReceived">$0.00</span></p><p class="flex justify-between font-bold text-blue-600"><span>NEW BALANCE:</span><span id="previewNewBalance">$0.00</span></p><p class="text-xs text-gray-500 italic" id="previewBalanceStatus">—</p></div><div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div></div>
+          <div id="invoicePreview"><div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-blue-600">Finora</span></div></div><div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div><table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody></table><div class="mt-4 border-t pt-3 space-y-1 text-sm"><p class="flex justify-between"><span>Previous Arrears:</span><span id="previewArrears">$0.00</span></p><p class="flex justify-between"><span>Current Bill:</span><span id="previewCurrentBill">$0.00</span></p><p class="flex justify-between font-semibold"><span>TOTAL DUE:</span><span id="previewTotalDue">$0.00</span></p><p class="flex justify-between"><span>Payment Received:</span><span id="previewPaymentReceived">$0.00</span></p><p class="flex justify-between font-bold text-blue-600"><span>NEW BALANCE:</span><span id="previewNewBalance">$0.00</span></p><p class="text-xs text-gray-500 italic" id="previewBalanceStatus">—</p></div><div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div></div>
         </div>
-        <div class="flex gap-3 mt-5"><button id="downloadPdfBtn" class="btn-3d flex-1 py-2 rounded-xl text-white">📥 PDF</button><button id="emailInvoiceBtn" class="btn-outline-3d flex-1 py-2 rounded-xl text-blue-600 border-blue-200">✉️ Email Invoice</button></div>
+        <div class="flex gap-3 mt-5"><button id="downloadPdfBtn" class="btn-3d flex-1 py-2 rounded-xl text-white">📥 PDF</button><button id="emailInvoiceBtn" class="bg-white/80 border border-gray-200 flex-1 py-2 rounded-xl text-blue-600 hover:bg-white transition">✉️ Email Invoice</button></div>
       </div>
     </div>
-    <!-- Expense Tracker Glass -->
-    <div class="glass-card p-6 mt-8 floating-card"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-receipt text-blue-500"></i> Expense Tracker</h3><div class="grid md:grid-cols-4 gap-3 mt-3"><select id="expenseType" class="border rounded-xl p-2 bg-white/80"><option value="Income">Income</option><option value="Expense">Expense</option></select><input type="text" id="expenseDesc" placeholder="Description" class="border rounded-xl p-2"><input type="number" id="expenseAmount" placeholder="Amount" class="border rounded-xl p-2"><input type="date" id="expenseDate" class="border rounded-xl p-2"></div><button id="addExpenseBtn" class="mt-3 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl border border-blue-200">+ Add transaction</button></div>
+    <!-- Expense Tracker -->
+    <div class="glass-card p-6 mt-8"><h3 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-receipt text-blue-500"></i> Expense Tracker</h3><div class="grid md:grid-cols-4 gap-3 mt-3"><select id="expenseType" class="border rounded-xl p-2 bg-white/80"><option value="Income">Income</option><option value="Expense">Expense</option></select><input type="text" id="expenseDesc" placeholder="Description" class="border rounded-xl p-2"><input type="number" id="expenseAmount" placeholder="Amount" class="border rounded-xl p-2"><input type="date" id="expenseDate" class="border rounded-xl p-2"></div><button id="addExpenseBtn" class="mt-3 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl border border-blue-200 hover:bg-blue-100 transition">+ Add transaction</button></div>
   </div>
 
   <!-- History Panel -->
@@ -205,18 +194,36 @@
   <div id="pricingPanel" class="tab-panel hidden">
     <div class="text-center mb-12"><h2 class="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">Simple, transparent pricing</h2><p class="text-gray-500 mt-2">Start free, upgrade when you need pro features.</p></div>
     <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      <div class="glass-card p-8 text-center floating-card"><i class="fas fa-seedling text-4xl text-blue-400"></i><h3 class="text-2xl font-bold mt-2">Free Plan</h3><p class="text-4xl font-bold mt-4">$0</p><ul class="mt-6 space-y-2 text-sm text-left"><li>✅ 5 free invoices (then signup)</li><li>✅ Expense tracking</li><li>✅ PDF with watermark</li><li>🔒 No watermark removal</li><li>🔒 No email sending</li></ul></div>
-      <div class="glass-card p-8 text-center floating-card border-2 border-blue-300 relative" style="animation-delay:0.1s"><div class="absolute -top-3 left-6 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><i class="fas fa-crown text-4xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p><ul class="mt-6 space-y-2 text-sm text-left"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="btn-3d w-full mt-6 py-2 rounded-xl text-white">Upgrade to Pro →</button></div>
+      <div class="glass-card p-8 text-center"><i class="fas fa-seedling text-4xl text-blue-400"></i><h3 class="text-2xl font-bold mt-2">Free Plan</h3><p class="text-4xl font-bold mt-4">$0</p><ul class="mt-6 space-y-2 text-sm text-left"><li>✅ 5 free invoices (then signup)</li><li>✅ Expense tracking</li><li>✅ PDF with watermark</li><li>🔒 No watermark removal</li><li>🔒 No email sending</li></ul></div>
+      <div class="glass-card p-8 text-center border-2 border-blue-300 relative"><div class="absolute -top-3 left-6 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><i class="fas fa-crown text-4xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p><ul class="mt-6 space-y-2 text-sm text-left"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="btn-3d w-full mt-6 py-2 rounded-xl text-white">Upgrade to Pro →</button></div>
     </div>
-    <footer class="mt-16 text-center text-gray-400 text-sm border-t border-gray-200 pt-8">Finora — 3D Isometric Dashboard | Built by Muhammad Asim, Accounting Student</footer>
+    <footer class="mt-16 text-center text-gray-400 text-sm border-t border-gray-200 pt-8">Finora — 3D Glassmorphism Dashboard | Built by Muhammad Asim, Accounting Student</footer>
   </div>
 </div>
 
-<!-- Hidden PDF template -->
-<div id="pdf-invoice"><div style="font-family:'Inter',sans-serif;max-width:700px;margin:0 auto"><div style="border-bottom:2px solid #e5e7eb;padding-bottom:15px;margin-bottom:20px;display:flex;justify-content:space-between"><div><h1 style="font-size:28px;font-weight:bold;margin:0">INVOICE</h1><p style="color:#6b7280;font-size:12px;margin:5px 0 0 0" id="pdfInvNumber">#FIN-001</p></div><div style="text-align:right"><p style="font-weight:600;color:#3b82f6;margin:0">Finora</p></div></div><div style="margin-bottom:20px"><p><strong>Client:</strong> <span id="pdfClient">—</span></p><p><strong>Date:</strong> <span id="pdfDate">—</span></p></div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px"><thead><tr style="background:#f3f4f6"><th style="padding:8px;text-align:left">Item</th><th style="padding:8px;text-align:right">Qty</th><th style="padding:8px;text-align:right">Price</th><th style="padding:8px;text-align:right">Tax</th><th style="padding:8px;text-align:right">Total</th></tr></thead><tbody id="pdfItemsTable"></tbody></table><div style="border-top:1px solid #e5e7eb;padding-top:15px;margin-top:15px"><p style="display:flex;justify-content:space-between"><span>Previous Arrears:</span><span id="pdfArrears">$0.00</span></p><p style="display:flex;justify-content:space-between"><span>Current Bill:</span><span id="pdfCurrentBill">$0.00</span></p><p style="display:flex;justify-content:space-between;font-weight:600"><span>TOTAL DUE:</span><span id="pdfTotalDue">$0.00</span></p><p style="display:flex;justify-content:space-between"><span>Payment Received:</span><span id="pdfPaymentReceived">$0.00</span></p><p style="display:flex;justify-content:space-between;font-weight:700;color:#3b82f6"><span>NEW BALANCE:</span><span id="pdfNewBalance">$0.00</span></p><p style="font-size:11px;color:#6b7280;font-style:italic" id="pdfBalanceStatus">—</p></div><div style="margin-top:20px;padding-top:15px;border-top:1px solid #e5e7eb;text-align:center;font-size:10px;color:#9ca3af"><span id="pdfWatermark">Free version • watermark active</span></div></div></div>
+<!-- Hidden PDF template - PURE INVOICE, NO BUTTONS -->
+<div id="pdf-invoice">
+  <div style="font-family:'Inter',sans-serif;max-width:700px;margin:0 auto">
+    <div style="border-bottom:2px solid #e5e7eb;padding-bottom:15px;margin-bottom:20px;display:flex;justify-content:space-between">
+      <div><h1 style="font-size:28px;font-weight:bold;margin:0">INVOICE</h1><p style="color:#6b7280;font-size:12px;margin:5px 0 0 0" id="pdfInvNumber">#FIN-001</p></div>
+      <div style="text-align:right"><p style="font-weight:600;color:#3b82f6;margin:0">Finora</p></div>
+    </div>
+    <div style="margin-bottom:20px"><p><strong>Client:</strong> <span id="pdfClient">—</span></p><p><strong>Date:</strong> <span id="pdfDate">—</span></p></div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px"><thead><tr style="background:#f3f4f6"><th style="padding:8px;text-align:left">Item</th><th style="padding:8px;text-align:right">Qty</th><th style="padding:8px;text-align:right">Price</th><th style="padding:8px;text-align:right">Tax</th><th style="padding:8px;text-align:right">Total</th></tr></thead><tbody id="pdfItemsTable"></tbody></table>
+    <div style="border-top:1px solid #e5e7eb;padding-top:15px;margin-top:15px">
+      <p style="display:flex;justify-content:space-between"><span>Previous Arrears:</span><span id="pdfArrears">$0.00</span></p>
+      <p style="display:flex;justify-content:space-between"><span>Current Bill:</span><span id="pdfCurrentBill">$0.00</span></p>
+      <p style="display:flex;justify-content:space-between;font-weight:600"><span>TOTAL DUE:</span><span id="pdfTotalDue">$0.00</span></p>
+      <p style="display:flex;justify-content:space-between"><span>Payment Received:</span><span id="pdfPaymentReceived">$0.00</span></p>
+      <p style="display:flex;justify-content:space-between;font-weight:700;color:#3b82f6"><span>NEW BALANCE:</span><span id="pdfNewBalance">$0.00</span></p>
+      <p style="font-size:11px;color:#6b7280;font-style:italic" id="pdfBalanceStatus">—</p>
+    </div>
+    <div style="margin-top:20px;padding-top:15px;border-top:1px solid #e5e7eb;text-align:center;font-size:10px;color:#9ca3af"><span id="pdfWatermark">Free version • watermark active</span></div>
+  </div>
+</div>
 
 <script>
-  // ========== COMPLETE STATE AND LOGIC (SAME AS BEFORE, FULLY FUNCTIONAL) ==========
+  // ========== COMPLETE WORKING LOGIC ==========
   let freeUsageCount = parseInt(localStorage.getItem('finora_freeUsage') || '0');
   let isLoggedIn = localStorage.getItem('finora_loggedIn') === 'true';
   let isPro = localStorage.getItem('finora_pro') === 'true';
@@ -229,18 +236,17 @@
   function getCurrency() { return document.getElementById('currencySelect')?.value || "USD"; }
   function formatMoney(amount) { let code=getCurrency(); let curr=currencies[code]||currencies.USD; let fm=code==="HUF"?Math.round(amount).toLocaleString('hu-HU'):amount.toLocaleString('en-US',{minimumFractionDigits:2}); return curr.after?fm+" "+curr.symbol:curr.symbol+fm; }
   function showToast(msg,type='success'){ let t=document.createElement('div'); t.className=`fixed bottom-5 right-5 bg-white shadow-lg rounded-lg px-5 py-3 text-sm z-50 border-l-4 ${type==='success'?'border-green-500':'border-red-500'}`; t.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle text-green-500':'fa-exclamation-triangle text-red-500'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
-  function updateTrialUI(){ let rem=Math.max(0,5-freeUsageCount); document.getElementById('trialCount').innerText=rem; if(isLoggedIn) document.getElementById('trialBadge').innerHTML='✅ Basic active (unlimited)'; if(isPro) document.getElementById('trialBadge').innerHTML='💎 Pro (unlimited + watermark removed)'; }
+  function updateTrialUI(){ let rem=Math.max(0,5-freeUsageCount); document.getElementById('trialCount').innerText=rem; if(isLoggedIn) document.getElementById('trialBadge').innerHTML=' Basic active (unlimited)'; if(isPro) document.getElementById('trialBadge').innerHTML=' Pro (unlimited)'; }
   function canUseFeature(){ return isLoggedIn || freeUsageCount<5; }
   function incrementUsage(){ if(!isLoggedIn){ freeUsageCount++; localStorage.setItem('finora_freeUsage',freeUsageCount); updateTrialUI(); return freeUsageCount<=5; } return true; }
 
-  // Signup
   document.getElementById('signupBtn').onclick=()=>document.getElementById('signupModal').classList.remove('hidden');
   document.getElementById('closeModalBtn').onclick=()=>document.getElementById('signupModal').classList.add('hidden');
   document.getElementById('confirmSignupBtn').onclick=()=>{ let n=document.getElementById('signupName').value.trim(); let e=document.getElementById('signupEmail').value.trim(); if(!n||!e){ showToast('Please enter name and email','error'); return; } isLoggedIn=true; localStorage.setItem('finora_loggedIn','true'); localStorage.setItem('finora_user',JSON.stringify({name:n,email:e})); freeUsageCount=0; localStorage.setItem('finora_freeUsage','0'); updateTrialUI(); document.getElementById('signupModal').classList.add('hidden'); showToast(`Welcome ${n}! Unlimited basic features unlocked.`); };
 
   document.getElementById('unlockProBtn').onclick=()=>document.getElementById('proUnlockModal').classList.remove('hidden');
   document.getElementById('closeUnlockModalBtn').onclick=()=>document.getElementById('proUnlockModal').classList.add('hidden');
-  document.getElementById('verifyUnlockBtn').onclick=()=>{ if(document.getElementById('unlockCodeInput').value.trim()===PRO_UNLOCK_CODE){ isPro=true; localStorage.setItem('finora_pro','true'); updateTrialUI(); document.getElementById('proUnlockModal').classList.add('hidden'); showToast('🎉 Pro unlocked! Watermark removed.'); generateInvoicePreview(); } else showToast('Invalid unlock code','error'); };
+  document.getElementById('verifyUnlockBtn').onclick=()=>{ if(document.getElementById('unlockCodeInput').value.trim()===PRO_UNLOCK_CODE){ isPro=true; localStorage.setItem('finora_pro','true'); updateTrialUI(); document.getElementById('proUnlockModal').classList.add('hidden'); showToast(' Pro unlocked! Watermark removed.'); generateInvoicePreview(); } else showToast('Invalid unlock code','error'); };
   const PRO_LINK="https://ko-fi.com/s/47e9231e59";
   function upgradeToPro(){ window.open(PRO_LINK,'_blank'); showToast('After payment, you will receive an unlock code via email.'); }
   document.getElementById('upgradeProBtn').onclick=upgradeToPro;
@@ -271,7 +277,7 @@
     document.getElementById('pdfClient').innerText=d.client;
     document.getElementById('pdfDate').innerText=d.date;
     let tbody=document.getElementById('pdfItemsTable'); tbody.innerHTML='';
-    d.items.forEach(i=>{ let tot=i.qty*i.price; tbody.innerHTML+=`<tr><td style="padding:8px">${i.name}</td><td style="padding:8px;text-align:right">${i.qty}</td><td style="padding:8px;text-align:right">${formatMoney(i.price)}</td><td style="padding:8px;text-align:right">${d.taxPercent}%</td><td style="padding:8px;text-align:right">${formatMoney(tot)}</td></tr>`; });
+    d.items.forEach(i=>{ let tot=i.qty*i.price; tbody.innerHTML+=`<tr><td style="padding:8px">${i.name}</td><td style="padding:8px;text-align:right">${i.qty}</td><td style="padding:8px;text-align:right">${formatMoney(i.price)}</td><td style="padding:8px;text-align:right">${d.taxPercent}%</td><td style="padding:8px;text-align:right">${formatMoney(tot)}</td></table>`; });
     document.getElementById('pdfArrears').innerHTML=formatMoney(d.previousArrears);
     document.getElementById('pdfCurrentBill').innerHTML=formatMoney(d.currentBill);
     document.getElementById('pdfTotalDue').innerHTML=formatMoney(d.totalDue);
@@ -295,8 +301,8 @@
     document.getElementById('previewNewBalance').innerHTML=formatMoney(Math.abs(d.newBalance));
     document.getElementById('previewBalanceStatus').innerHTML=d.newBalance>0?`Owes ${formatMoney(d.newBalance)}`:(d.newBalance<0?`Advance ${formatMoney(Math.abs(d.newBalance))}`:'Cleared');
     updatePDFTemplate();
-    if(isPro){ document.getElementById('watermarkText').innerHTML='Pro • no watermark'; document.getElementById('invoiceProMark').innerHTML='💎 Pro active'; }
-    else{ document.getElementById('watermarkText').innerHTML='Free version • watermark active'; document.getElementById('invoiceProMark').innerHTML='🔓 Free version'; }
+    if(isPro){ document.getElementById('watermarkText').innerHTML='Pro • no watermark'; document.getElementById('invoiceProMark').innerHTML=' Pro active'; }
+    else{ document.getElementById('watermarkText').innerHTML='Free version • watermark active'; document.getElementById('invoiceProMark').innerHTML=' Free version'; }
   }
 
   function saveCurrentInvoice(){
@@ -314,8 +320,8 @@
 
   function emailCurrentInvoice(){ if(!isPro){ showToast('Pro feature: Unlock Pro to send email invoices.','error'); return; } let d=getCurrentInvoiceData(); window.location.href=`mailto:?subject=Invoice ${d.invNumber} from Finora&body=Dear ${d.client},%0A%0AInvoice Details:%0APrevious Arrears: ${formatMoney(d.previousArrears)}%0ACurrent Bill: ${formatMoney(d.currentBill)}%0ATotal Due: ${formatMoney(d.totalDue)}%0APayment Received: ${formatMoney(d.paymentReceived)}%0ANew Balance: ${formatMoney(Math.abs(d.newBalance))}%0A%0AThank you.%0AFinora`; showToast('Email client opened'); }
 
-  document.getElementById('generateInvoiceBtn').onclick=()=>{ if(!canUseFeature()){ showToast('Free trial limit reached. Sign up.','error'); return; } incrementUsage(); generateInvoicePreview(); saveCurrentInvoice(); showToast('✨ Invoice generated!'); };
-  document.getElementById('downloadPdfBtn').onclick=async()=>{ if(!canUseFeature()&&!isLoggedIn){ showToast('Sign up to download','error'); return; } if(!isLoggedIn) incrementUsage(); updatePDFTemplate(); const el=document.getElementById('pdf-invoice'); try{ const canvas=await html2canvas(el,{scale:2,backgroundColor:'#fff'}); const img=canvas.toDataURL('image/png'); const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4'); const w=190; const h=(canvas.height*w)/canvas.width; pdf.addImage(img,'PNG',10,10,w,h); pdf.save(`Finora_${getCurrentInvoiceData().invNumber}.pdf`); showToast('✅ PDF downloaded'); } catch(e){ showToast('Error','error'); } };
+  document.getElementById('generateInvoiceBtn').onclick=()=>{ if(!canUseFeature()){ showToast('Free trial limit reached. Sign up.','error'); return; } incrementUsage(); generateInvoicePreview(); saveCurrentInvoice(); showToast(' Invoice generated!'); };
+  document.getElementById('downloadPdfBtn').onclick=async()=>{ if(!canUseFeature()&&!isLoggedIn){ showToast('Sign up to download','error'); return; } if(!isLoggedIn) incrementUsage(); updatePDFTemplate(); const el=document.getElementById('pdf-invoice'); try{ const canvas=await html2canvas(el,{scale:2,backgroundColor:'#fff'}); const img=canvas.toDataURL('image/png'); const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4'); const w=190; const h=(canvas.height*w)/canvas.width; pdf.addImage(img,'PNG',10,10,w,h); pdf.save(`Finora_${getCurrentInvoiceData().invNumber}.pdf`); showToast(' PDF downloaded'); } catch(e){ showToast('Error','error'); } };
   document.getElementById('emailInvoiceBtn').onclick=emailCurrentInvoice;
 
   document.getElementById('addExpenseBtn').onclick=()=>{ let type=document.getElementById('expenseType').value, desc=document.getElementById('expenseDesc').value, amt=parseFloat(document.getElementById('expenseAmount').value), date=document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10); if(!desc||isNaN(amt)){ showToast('Fill description and amount','error'); return; } transactions.push({type,desc,amount:amt,date}); localStorage.setItem('finora_transactions',JSON.stringify(transactions)); updateDashboard(); showToast(`${type} added!`); document.getElementById('expenseDesc').value=''; document.getElementById('expenseAmount').value=''; };
