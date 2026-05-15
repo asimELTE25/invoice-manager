@@ -34,7 +34,7 @@
     </div>
   </nav>
 
-  <!-- Signup Modal (Real) -->
+  <!-- Signup Modal -->
   <div id="signupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
       <h3 class="text-xl font-bold mb-2">Create your free account</h3>
@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <!-- Pro Unlock Modal (Enter code after purchase) -->
+  <!-- Pro Unlock Modal -->
   <div id="proUnlockModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
       <h3 class="text-xl font-bold mb-2">Unlock Pro Features</h3>
@@ -68,9 +68,9 @@
   <!-- Dashboard Panel -->
   <div id="dashboardPanel" class="tab-panel">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-emerald-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="totalIncome">0</span></p></div>
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Expenses</span><i class="fas fa-arrow-down text-rose-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="totalExpense">0</span></p></div>
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Net Balance</span><i class="fas fa-wallet text-indigo-500"></i></div><p class="text-3xl font-bold mt-2">$<span id="netBalance">0</span></p></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-emerald-500"></i></div><p class="text-3xl font-bold mt-2" id="totalIncomeDisplay">$0</p></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Total Expenses</span><i class="fas fa-arrow-down text-rose-500"></i></div><p class="text-3xl font-bold mt-2" id="totalExpenseDisplay">$0</p></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><div class="flex justify-between"><span class="text-gray-500 text-sm">Net Balance</span><i class="fas fa-wallet text-indigo-500"></i></div><p class="text-3xl font-bold mt-2" id="netBalanceDisplay">$0</p></div>
     </div>
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><h3 class="text-lg font-semibold mb-4">Recent Transactions</h3><div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"><p class="text-gray-400 text-center py-4">No transactions yet</p></div></div>
     <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-500 border-t pt-6"><span><i class="fas fa-shield-alt text-indigo-400 mr-1"></i> Secure with Supabase</span><span><i class="fas fa-coins text-indigo-400 mr-1"></i> No hidden fees</span><span><i class="fas fa-graduation-cap text-indigo-400 mr-1"></i> Built by Accounting Student</span></div>
@@ -82,18 +82,73 @@
       <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
         <h2 class="text-xl font-bold"><i class="fas fa-file-invoice text-indigo-500"></i> New Invoice</h2>
         <div class="space-y-4 mt-4">
+          
+          <!-- Currency Selector -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+            <select id="currencySelect" class="w-full border rounded-xl p-3">
+              <option value="USD">💵 USD - US Dollar ($)</option>
+              <option value="EUR">💶 EUR - Euro (€)</option>
+              <option value="GBP">💷 GBP - British Pound (£)</option>
+              <option value="HUF">🇭🇺 HUF - Hungarian Forint (Ft)</option>
+              <option value="PKR">🇵🇰 PKR - Pakistani Rupee (₨)</option>
+              <option value="INR">🇮🇳 INR - Indian Rupee (₹)</option>
+              <option value="JPY">🇯🇵 JPY - Japanese Yen (¥)</option>
+              <option value="AUD">🇦🇺 AUD - Australian Dollar (A$)</option>
+              <option value="CAD">🇨🇦 CAD - Canadian Dollar (C$)</option>
+              <option value="CHF">🇨🇭 CHF - Swiss Franc (Fr)</option>
+              <option value="CNY">🇨🇳 CNY - Chinese Yuan (¥)</option>
+              <option value="SEK">🇸🇪 SEK - Swedish Krona (kr)</option>
+              <option value="NOK">🇳🇴 NOK - Norwegian Krone (kr)</option>
+              <option value="DKK">🇩🇰 DKK - Danish Krone (kr)</option>
+              <option value="PLN">🇵🇱 PLN - Polish Zloty (zł)</option>
+              <option value="CZK">🇨🇿 CZK - Czech Koruna (Kč)</option>
+              <option value="RUB">🇷🇺 RUB - Russian Ruble (₽)</option>
+              <option value="BRL">🇧🇷 BRL - Brazilian Real (R$)</option>
+              <option value="TRY">🇹🇷 TRY - Turkish Lira (₺)</option>
+              <option value="AED">🇦🇪 AED - UAE Dirham (د.إ)</option>
+            </select>
+          </div>
+          
           <input type="text" id="clientName" placeholder="Client Name *" class="w-full border rounded-xl p-3">
+          
           <div id="itemsContainer" class="space-y-3"><div class="item-row grid grid-cols-12 gap-2"><input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm"><button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button></div></div>
           <button onclick="addInvoiceItem()" class="text-indigo-600 text-sm font-medium"><i class="fas fa-plus-circle"></i> Add item</button>
+          
           <div class="grid grid-cols-2 gap-3"><input type="date" id="invoiceDate" class="border rounded-xl p-3"><input type="text" id="taxRate" placeholder="Tax %" value="0" class="border rounded-xl p-3"></div>
+          
+          <!-- Arrears / Credit Fields -->
+          <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+            <h3 class="font-semibold text-gray-700">💰 Balance & Payment</h3>
+            <input type="number" id="previousArrears" placeholder="Previous Arrears (amount customer already owes)" value="0" class="w-full border rounded-xl p-3">
+            <input type="number" id="paymentReceived" placeholder="Payment Received from customer" value="0" class="w-full border rounded-xl p-3">
+            <p class="text-sm text-gray-500">Total Due = Arrears + Current Bill</p>
+            <p class="text-sm text-gray-500">New Balance = Total Due - Payment Received</p>
+          </div>
+          
           <textarea id="notes" placeholder="Notes" rows="2" class="w-full border rounded-xl p-3"></textarea>
           <button id="generateInvoiceBtn" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md">✨ Generate Invoice</button>
         </div>
       </div>
+      
       <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
         <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-lg">Invoice Preview</h3><span id="invoiceProMark" class="text-xs">🔓 Free version</span></div>
         <div id="invoicePreviewContainer" class="bg-white border rounded-xl p-5">
-          <div id="invoicePreview"><div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-indigo-600">Finora</span></div></div><div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div><table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody></table><div class="mt-4 text-right"><p>Subtotal: $<span id="previewSubtotal">0</span></p><p>Tax: $<span id="previewTaxAmt">0</span></p><p class="text-xl font-bold">Grand Total: $<span id="previewGrand">0</span></p></div><div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div></div>
+          <div id="invoicePreview">
+            <div class="border-b pb-3 flex justify-between"><div><span class="font-bold text-xl">INVOICE</span><br><span class="text-xs text-gray-500" id="previewInvNumber">#FIN-001</span></div><div class="text-right"><span class="font-semibold text-indigo-600">Finora</span></div></div>
+            <div class="mt-3"><p><strong>Client:</strong> <span id="previewClient">—</span></p><p><strong>Date:</strong> <span id="previewDate">—</span></p></div>
+            <table class="w-full mt-3 text-xs border-collapse"><thead><tr class="bg-gray-100"><th class="p-2 text-left">Item</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Price</th><th class="p-2 text-right">Tax</th><th class="p-2 text-right">Total</th></tr></thead><tbody id="previewItemsTable"></tbody>能有
+            <!-- Arrears Section -->
+            <div class="mt-4 border-t pt-3 space-y-1 text-sm">
+              <p class="flex justify-between"><span>Previous Arrears:</span><span id="previewArrears">$0.00</span></p>
+              <p class="flex justify-between"><span>Current Bill:</span><span id="previewCurrentBill">$0.00</span></p>
+              <p class="flex justify-between font-semibold"><span>TOTAL DUE:</span><span id="previewTotalDue">$0.00</span></p>
+              <p class="flex justify-between"><span>Payment Received:</span><span id="previewPaymentReceived">$0.00</span></p>
+              <p class="flex justify-between font-bold text-indigo-600"><span>NEW BALANCE:</span><span id="previewNewBalance">$0.00</span></p>
+              <p class="text-xs text-gray-500 italic" id="previewBalanceStatus">—</p>
+            </div>
+            <div class="mt-3 text-xs text-gray-400 border-t pt-2 text-center" id="watermarkText">Free version • watermark active</div>
+          </div>
         </div>
         <div class="flex gap-3 mt-5"><button id="downloadPdfBtn" class="flex-1 bg-emerald-600 text-white py-2 rounded-xl">📥 PDF</button><button id="emailInvoiceBtn" class="flex-1 bg-indigo-100 text-indigo-700 py-2 rounded-xl">✉️ Email Invoice</button></div>
         <div class="mt-4 text-center text-xs text-gray-400"><span><i class="fas fa-lock text-yellow-500"></i> Pro: Remove watermark & email</span></div>
@@ -104,7 +159,7 @@
 
   <!-- Invoice History Panel -->
   <div id="historyPanel" class="tab-panel hidden">
-    <div class="bg-white rounded-2xl shadow-md p-6"><h2 class="text-xl font-bold mb-4">📜 Saved Invoices</h2><div id="savedInvoicesList" class="space-y-3 max-h-96 overflow-y-auto"><p class="text-gray-400 text-center py-4">No invoices saved. Generate one and it will appear here.</p></div></div>
+    <div class="bg-white rounded-2xl shadow-md p-6"><h2 class="text-xl font-bold mb-4">📜 Saved Invoices</h2><div id="savedInvoicesList" class="space-y-3 max-h-96 overflow-y-auto"><p class="text-gray-400 text-center py-4">No invoices saved.</p></div></div>
   </div>
 
   <!-- Pricing Panel -->
@@ -112,7 +167,7 @@
     <div class="max-w-5xl mx-auto text-center mb-12"><h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-transparent">Simple, transparent pricing</h2><p class="text-gray-500 mt-2">Start free, upgrade when you need pro features.</p></div>
     <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
       <div class="bg-white rounded-2xl shadow-lg p-8"><div class="text-center"><i class="fas fa-seedling text-3xl text-indigo-400"></i><h3 class="text-2xl font-bold mt-2">Free Plan</h3><p class="text-4xl font-bold mt-4">$0</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ 5 free invoices (then signup)</li><li>✅ Expense tracking</li><li>✅ PDF with watermark</li><li>🔒 No watermark removal</li><li>🔒 No email sending</li></ul></div>
-      <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-xl p-8 border border-indigo-200 relative"><div class="absolute -top-3 left-6 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><div class="text-center"><i class="fas fa-crown text-3xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history (cloud save)</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="w-full mt-6 bg-indigo-600 text-white py-2 rounded-xl font-semibold shadow-md">Upgrade to Pro →</button></div>
+      <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-xl p-8 border border-indigo-200 relative"><div class="absolute -top-3 left-6 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">MOST POPULAR</div><div class="text-center"><i class="fas fa-crown text-3xl text-amber-500"></i><h3 class="text-2xl font-bold mt-2">Pro Plan</h3><p class="text-4xl font-bold mt-4">$5</p><p class="text-gray-400 text-sm">one-time / lifetime</p></div><ul class="mt-6 space-y-3 text-sm"><li>✅ Unlimited invoices</li><li>✅ Remove PDF watermark</li><li>✅ Email invoice delivery</li><li>✅ Invoice history</li><li>✅ Priority support</li></ul><button id="pricingProBtn" class="w-full mt-6 bg-indigo-600 text-white py-2 rounded-xl font-semibold shadow-md">Upgrade to Pro →</button></div>
     </div>
     <footer class="mt-16 text-center text-gray-400 text-sm border-t pt-8">Finora — Built with ☕ by Muhammad Asim, Accounting Student</footer>
   </div>
@@ -127,249 +182,161 @@
   let savedInvoices = JSON.parse(localStorage.getItem('finora_invoices') || '[]');
   let invoiceCounter = parseInt(localStorage.getItem('finora_invoiceCounter') || '1');
 
-  // Unlock code (seller provides this after payment on Ko-fi)
-  const PRO_UNLOCK_CODE = "FINORA-PRO-2025";  // CHANGE THIS AFTER FIRST SALE!
+  const PRO_UNLOCK_CODE = "FINORA-PRO-2025";
 
-  // Helper functions
-  function showToast(msg, type='success') {
-    let toast = document.createElement('div');
-    toast.className = `fixed bottom-5 right-5 bg-white shadow-lg rounded-lg px-5 py-3 text-sm z-50 border-l-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
-    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-red-500'}"></i> ${msg}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+  // Currency data
+  const currencies = {
+    USD: { symbol: "$", code: "USD", position: "before" },
+    EUR: { symbol: "€", code: "EUR", position: "before" },
+    GBP: { symbol: "£", code: "GBP", position: "before" },
+    HUF: { symbol: "Ft", code: "HUF", position: "after" },
+    PKR: { symbol: "₨", code: "PKR", position: "before" },
+    INR: { symbol: "₹", code: "INR", position: "before" },
+    JPY: { symbol: "¥", code: "JPY", position: "before" },
+    AUD: { symbol: "A$", code: "AUD", position: "before" },
+    CAD: { symbol: "C$", code: "CAD", position: "before" },
+    CHF: { symbol: "Fr", code: "CHF", position: "before" },
+    CNY: { symbol: "¥", code: "CNY", position: "before" },
+    SEK: { symbol: "kr", code: "SEK", position: "after" },
+    NOK: { symbol: "kr", code: "NOK", position: "after" },
+    DKK: { symbol: "kr", code: "DKK", position: "after" },
+    PLN: { symbol: "zł", code: "PLN", position: "after" },
+    CZK: { symbol: "Kč", code: "CZK", position: "after" },
+    RUB: { symbol: "₽", code: "RUB", position: "after" },
+    BRL: { symbol: "R$", code: "BRL", position: "before" },
+    TRY: { symbol: "₺", code: "TRY", position: "before" },
+    AED: { symbol: "د.إ", code: "AED", position: "after" }
+  };
+
+  function getCurrencySymbol() { return currencies[document.getElementById('currencySelect')?.value]?.symbol || "$"; }
+  function getCurrencyCode() { return document.getElementById('currencySelect')?.value || "USD"; }
+  function formatMoney(amount) {
+    let symbol = getCurrencySymbol();
+    let code = getCurrencyCode();
+    let formatted = code === "HUF" ? Math.round(amount).toLocaleString('hu-HU') : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return code === "HUF" || code === "SEK" || code === "NOK" || code === "DKK" || code === "PLN" || code === "CZK" || code === "RUB" ? formatted + " " + symbol : symbol + formatted;
   }
 
-  function updateTrialUI() {
-    let remaining = Math.max(0, 5 - freeUsageCount);
-    document.getElementById('trialCount').innerText = remaining;
-    if (isLoggedIn) document.getElementById('trialBadge').innerHTML = '✅ Basic active (unlimited)';
-    if (isPro) document.getElementById('trialBadge').innerHTML = '💎 Pro (unlimited + watermark removed)';
-  }
-
+  function showToast(msg, type='success') { let t=document.createElement('div'); t.className=`fixed bottom-5 right-5 bg-white shadow-lg rounded-lg px-5 py-3 text-sm z-50 border-l-4 ${type==='success'?'border-green-500':'border-red-500'}`; t.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle text-green-500':'fa-exclamation-triangle text-red-500'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+  function updateTrialUI() { let remaining = Math.max(0,5-freeUsageCount); document.getElementById('trialCount').innerText=remaining; if(isLoggedIn) document.getElementById('trialBadge').innerHTML='✅ Basic active (unlimited)'; if(isPro) document.getElementById('trialBadge').innerHTML='💎 Pro (unlimited + watermark removed)'; }
   function canUseFeature() { return isLoggedIn || freeUsageCount < 5; }
-  function incrementUsage() { if (!isLoggedIn) { freeUsageCount++; localStorage.setItem('finora_freeUsage', freeUsageCount); updateTrialUI(); return freeUsageCount <= 5; } return true; }
+  function incrementUsage() { if(!isLoggedIn){ freeUsageCount++; localStorage.setItem('finora_freeUsage',freeUsageCount); updateTrialUI(); return freeUsageCount<=5; } return true; }
 
-  // Signup logic
-  const signupModal = document.getElementById('signupModal');
-  document.getElementById('signupBtn').onclick = () => signupModal.classList.remove('hidden');
-  document.getElementById('closeModalBtn').onclick = () => signupModal.classList.add('hidden');
-  document.getElementById('confirmSignupBtn').onclick = () => {
-    let name = document.getElementById('signupName').value.trim();
-    let email = document.getElementById('signupEmail').value.trim();
-    if (!name || !email) { showToast('Please enter name and email', 'error'); return; }
-    if (!email.includes('@')) { showToast('Invalid email', 'error'); return; }
-    isLoggedIn = true;
-    localStorage.setItem('finora_loggedIn', 'true');
-    localStorage.setItem('finora_user', JSON.stringify({name, email}));
-    freeUsageCount = 0; localStorage.setItem('finora_freeUsage', '0');
-    updateTrialUI();
-    signupModal.classList.add('hidden');
-    showToast(`Welcome ${name}! Unlimited basic features unlocked.`);
-  };
+  // Signup
+  const signupModal=document.getElementById('signupModal');
+  document.getElementById('signupBtn').onclick=()=>signupModal.classList.remove('hidden');
+  document.getElementById('closeModalBtn').onclick=()=>signupModal.classList.add('hidden');
+  document.getElementById('confirmSignupBtn').onclick=()=>{ let name=document.getElementById('signupName').value.trim(); let email=document.getElementById('signupEmail').value.trim(); if(!name||!email){ showToast('Please enter name and email','error'); return; } isLoggedIn=true; localStorage.setItem('finora_loggedIn','true'); localStorage.setItem('finora_user',JSON.stringify({name,email})); freeUsageCount=0; localStorage.setItem('finora_freeUsage','0'); updateTrialUI(); signupModal.classList.add('hidden'); showToast(`Welcome ${name}! Unlimited basic features unlocked.`); };
 
-  // Pro unlock modal
-  const proUnlockModal = document.getElementById('proUnlockModal');
-  document.getElementById('unlockProBtn').onclick = () => proUnlockModal.classList.remove('hidden');
-  document.getElementById('closeUnlockModalBtn').onclick = () => proUnlockModal.classList.add('hidden');
-  document.getElementById('verifyUnlockBtn').onclick = () => {
-    let code = document.getElementById('unlockCodeInput').value.trim();
-    if (code === PRO_UNLOCK_CODE) {
-      isPro = true;
-      localStorage.setItem('finora_pro', 'true');
-      updateTrialUI();
-      proUnlockModal.classList.add('hidden');
-      showToast('🎉 Pro unlocked! Watermark removed, email invoices enabled.');
-      generateInvoicePreview(); // refresh preview
-    } else {
-      showToast('Invalid unlock code. Please purchase Pro to get a valid code.', 'error');
-    }
-  };
+  // Pro unlock
+  const proUnlockModal=document.getElementById('proUnlockModal');
+  document.getElementById('unlockProBtn').onclick=()=>proUnlockModal.classList.remove('hidden');
+  document.getElementById('closeUnlockModalBtn').onclick=()=>proUnlockModal.classList.add('hidden');
+  document.getElementById('verifyUnlockBtn').onclick=()=>{ if(document.getElementById('unlockCodeInput').value.trim()===PRO_UNLOCK_CODE){ isPro=true; localStorage.setItem('finora_pro','true'); updateTrialUI(); proUnlockModal.classList.add('hidden'); showToast('🎉 Pro unlocked! Watermark removed.'); generateInvoicePreview(); } else showToast('Invalid unlock code','error'); };
+  
+  const PRO_LINK="https://ko-fi.com/s/47e9231e59";
+  function upgradeToPro(){ window.open(PRO_LINK,'_blank'); showToast('After payment, you will receive an unlock code via email.'); }
+  document.getElementById('upgradeProBtn').onclick=upgradeToPro;
+  document.getElementById('pricingProBtn').onclick=upgradeToPro;
 
-  // Upgrade button (redirects to Ko-fi)
-  const PRO_LINK = "https://ko-fi.com/s/47e9231e59";
-  function upgradeToPro() { window.open(PRO_LINK, '_blank'); showToast('After payment, you will receive an unlock code via email.'); }
-  document.getElementById('upgradeProBtn').onclick = upgradeToPro;
-  document.getElementById('pricingProBtn').onclick = upgradeToPro;
+  function addInvoiceItem(){ let c=document.getElementById('itemsContainer'); let d=document.createElement('div'); d.className='item-row grid grid-cols-12 gap-2'; d.innerHTML=`<input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm"><button onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button>`; c.appendChild(d); }
+  window.removeItemRow=(btn)=>{ if(document.querySelectorAll('.item-row').length>1) btn.closest('.item-row').remove(); else showToast('At least one item required','error'); };
 
-  // Invoice items management
-  function addInvoiceItem() {
-    let container = document.getElementById('itemsContainer');
-    let div = document.createElement('div');
-    div.className = 'item-row grid grid-cols-12 gap-2';
-    div.innerHTML = `<input type="text" placeholder="Item" class="col-span-5 border rounded-xl p-2 text-sm"><input type="number" placeholder="Qty" value="1" class="col-span-2 border rounded-xl p-2 text-sm"><input type="number" placeholder="Price" class="col-span-3 border rounded-xl p-2 text-sm"><button type="button" onclick="removeItemRow(this)" class="col-span-2 text-red-500 text-sm">🗑️</button>`;
-    container.appendChild(div);
-  }
-  window.removeItemRow = (btn) => { if (document.querySelectorAll('.item-row').length > 1) btn.closest('.item-row').remove(); else showToast('At least one item required', 'error'); };
-
-  function getCurrentInvoiceData() {
-    let client = document.getElementById('clientName').value || 'Client';
-    let date = document.getElementById('invoiceDate').value || new Date().toISOString().slice(0,10);
-    let taxPercent = parseFloat(document.getElementById('taxRate').value) || 0;
-    let items = [];
-    document.querySelectorAll('#itemsContainer .item-row').forEach(row => {
-      let name = row.children[0]?.value;
-      let qty = parseFloat(row.children[1]?.value) || 0;
-      let price = parseFloat(row.children[2]?.value) || 0;
-      if (name && qty && price) items.push({name, qty, price});
-    });
-    let subtotal = items.reduce((s,i) => s + (i.qty*i.price),0);
-    let taxAmt = subtotal * (taxPercent/100);
-    let grand = subtotal + taxAmt;
-    let invNumber = `FIN-${String(invoiceCounter).padStart(4,'0')}`;
-    return { client, date, taxPercent, items, subtotal, taxAmt, grand, invNumber };
+  function getCurrentInvoiceData(){
+    let client=document.getElementById('clientName').value||'Client';
+    let date=document.getElementById('invoiceDate').value||new Date().toISOString().slice(0,10);
+    let taxPercent=parseFloat(document.getElementById('taxRate').value)||0;
+    let items=[]; document.querySelectorAll('#itemsContainer .item-row').forEach(row=>{ let name=row.children[0]?.value; let qty=parseFloat(row.children[1]?.value)||0; let price=parseFloat(row.children[2]?.value)||0; if(name&&qty&&price) items.push({name,qty,price}); });
+    let subtotal=items.reduce((s,i)=>s+(i.qty*i.price),0);
+    let taxAmt=subtotal*(taxPercent/100);
+    let currentBill=subtotal+taxAmt;
+    let previousArrears=parseFloat(document.getElementById('previousArrears').value)||0;
+    let paymentReceived=parseFloat(document.getElementById('paymentReceived').value)||0;
+    let totalDue=previousArrears+currentBill;
+    let newBalance=totalDue-paymentReceived;
+    let invNumber=`FIN-${String(invoiceCounter).padStart(4,'0')}`;
+    return { client, date, taxPercent, items, subtotal, taxAmt, currentBill, previousArrears, paymentReceived, totalDue, newBalance, invNumber };
   }
 
-  function generateInvoicePreview() {
-    let data = getCurrentInvoiceData();
-    document.getElementById('previewInvNumber').innerText = '#' + data.invNumber;
-    document.getElementById('previewClient').innerText = data.client;
-    document.getElementById('previewDate').innerText = data.date;
-    let tbody = document.getElementById('previewItemsTable');
-    tbody.innerHTML = '';
-    data.items.forEach(i => {
-      let tot = i.qty * i.price;
-      tbody.innerHTML += `<tr><td class="p-1">${i.name}</td><td class="text-right">${i.qty}</td><td class="text-right">$${i.price.toFixed(2)}</td><td class="text-right">${data.taxPercent}%</td><td class="text-right">$${tot.toFixed(2)}</td></tr>`;
-    });
-    document.getElementById('previewSubtotal').innerText = data.subtotal.toFixed(2);
-    document.getElementById('previewTaxAmt').innerText = data.taxAmt.toFixed(2);
-    document.getElementById('previewGrand').innerText = data.grand.toFixed(2);
-    // Watermark logic based on isPro
-    if (isPro) {
-      document.getElementById('watermarkText').innerHTML = 'Pro • no watermark';
-      document.getElementById('invoiceProMark').innerHTML = '💎 Pro active';
-    } else {
-      document.getElementById('watermarkText').innerHTML = 'Free version • watermark active';
-      document.getElementById('invoiceProMark').innerHTML = '🔓 Free version';
-    }
+  function generateInvoicePreview(){
+    let d=getCurrentInvoiceData();
+    document.getElementById('previewInvNumber').innerText='#'+d.invNumber;
+    document.getElementById('previewClient').innerText=d.client;
+    document.getElementById('previewDate').innerText=d.date;
+    let tbody=document.getElementById('previewItemsTable'); tbody.innerHTML='';
+    d.items.forEach(i=>{ let tot=i.qty*i.price; tbody.innerHTML+=`<tr><td class="p-1">${i.name}</td><td class="text-right">${i.qty}</td><td class="text-right">${formatMoney(i.price)}</td><td class="text-right">${d.taxPercent}%</td><td class="text-right">${formatMoney(tot)}</td>`; });
+    document.getElementById('previewArrears').innerHTML=formatMoney(d.previousArrears);
+    document.getElementById('previewCurrentBill').innerHTML=formatMoney(d.currentBill);
+    document.getElementById('previewTotalDue').innerHTML=formatMoney(d.totalDue);
+    document.getElementById('previewPaymentReceived').innerHTML=formatMoney(d.paymentReceived);
+    document.getElementById('previewNewBalance').innerHTML=formatMoney(Math.abs(d.newBalance));
+    let statusMsg=d.newBalance>0?`Customer still owes ${formatMoney(d.newBalance)}`:(d.newBalance<0?`Customer has advance: ${formatMoney(Math.abs(d.newBalance))} (shop owes customer)`:'All cleared - No balance');
+    document.getElementById('previewBalanceStatus').innerHTML=statusMsg;
+    if(isPro){ document.getElementById('watermarkText').innerHTML='Pro • no watermark'; document.getElementById('invoiceProMark').innerHTML='💎 Pro active'; }
+    else{ document.getElementById('watermarkText').innerHTML='Free version • watermark active'; document.getElementById('invoiceProMark').innerHTML='🔓 Free version'; }
   }
 
-  // Save invoice to history
-  function saveCurrentInvoice() {
-    let data = getCurrentInvoiceData();
-    let invoiceRecord = {
-      id: Date.now(),
-      number: data.invNumber,
-      client: data.client,
-      date: data.date,
-      total: data.grand,
-      items: data.items,
-      taxPercent: data.taxPercent,
-      timestamp: new Date().toISOString()
-    };
+  function saveCurrentInvoice(){
+    let d=getCurrentInvoiceData();
+    let invoiceRecord={ id:Date.now(), number:d.invNumber, client:d.client, date:d.date, currentBill:d.currentBill, previousArrears:d.previousArrears, paymentReceived:d.paymentReceived, totalDue:d.totalDue, newBalance:d.newBalance, items:d.items, taxPercent:d.taxPercent, currency:getCurrencyCode(), timestamp:new Date().toISOString() };
     savedInvoices.unshift(invoiceRecord);
-    localStorage.setItem('finora_invoices', JSON.stringify(savedInvoices));
-    localStorage.setItem('finora_invoiceCounter', parseInt(invoiceCounter)+1);
-    invoiceCounter = parseInt(invoiceCounter)+1;
+    localStorage.setItem('finora_invoices',JSON.stringify(savedInvoices));
+    localStorage.setItem('finora_invoiceCounter',invoiceCounter+1);
+    invoiceCounter++;
     showToast('Invoice saved to history');
     renderInvoiceHistory();
   }
 
-  function renderInvoiceHistory() {
-    let container = document.getElementById('savedInvoicesList');
-    if (!container) return;
-    if (savedInvoices.length === 0) { container.innerHTML = '<p class="text-gray-400 text-center py-4">No invoices saved. Generate one and it will appear here.</p>'; return; }
-    container.innerHTML = savedInvoices.map(inv => `
-      <div class="border rounded-xl p-4 bg-gray-50 flex flex-wrap justify-between items-center gap-3">
-        <div><span class="font-bold">${inv.number}</span><br><span class="text-xs text-gray-500">${inv.client} | ${inv.date}</span></div>
-        <div><span class="font-semibold">$${inv.total.toFixed(2)}</span></div>
-        <button onclick="viewInvoiceDetails(${inv.id})" class="text-indigo-600 text-sm underline">View</button>
-      </div>
-    `).join('');
+  function renderInvoiceHistory(){
+    let container=document.getElementById('savedInvoicesList');
+    if(!container) return;
+    if(savedInvoices.length===0){ container.innerHTML='<p class="text-gray-400 text-center py-4">No invoices saved.</p>'; return; }
+    container.innerHTML=savedInvoices.map(inv=>`<div class="border rounded-xl p-4 bg-gray-50"><div class="flex justify-between"><span class="font-bold">${inv.number}</span><span>${inv.client} | ${inv.date}</span></div><div class="flex justify-between mt-2"><span>Total Due: ${formatMoneyForHistory(inv.totalDue,inv.currency)}</span><span>New Balance: ${formatMoneyForHistory(inv.newBalance,inv.currency)}</span></div><button onclick="viewInvoiceDetails(${inv.id})" class="text-indigo-600 text-sm underline mt-2">View Details</button></div>`).join('');
   }
 
-  window.viewInvoiceDetails = (id) => {
-    let inv = savedInvoices.find(i => i.id === id);
-    if (!inv) return;
-    alert(`Invoice ${inv.number}\nClient: ${inv.client}\nDate: ${inv.date}\nTotal: $${inv.total.toFixed(2)}\nItems: ${inv.items.length}`);
-  };
+  function formatMoneyForHistory(amount,currencyCode){
+    let curr=currencies[currencyCode]||currencies.USD;
+    let formatted=currencyCode==="HUF"?Math.round(amount).toLocaleString('hu-HU'):amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return currencyCode==="HUF"||currencyCode==="SEK"||currencyCode==="NOK"||currencyCode==="DKK"||currencyCode==="PLN"||currencyCode==="CZK"||currencyCode==="RUB"?formatted+" "+curr.symbol:curr.symbol+formatted;
+  }
 
-  // Email invoice (simple mailto)
-  function emailCurrentInvoice() {
-    if (!isPro) { showToast('Pro feature: Unlock Pro to send email invoices.', 'error'); return; }
-    let data = getCurrentInvoiceData();
-    let subject = `Invoice ${data.invNumber} from Finora`;
-    let body = `Dear ${data.client},\n\nPlease find your invoice details below:\n\nTotal: $${data.grand.toFixed(2)}\nDate: ${data.date}\n\nThank you for your business.\n\nFinora`;
-    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.viewInvoiceDetails=(id)=>{ let inv=savedInvoices.find(i=>i.id===id); if(inv) alert(`Invoice ${inv.number}\nClient: ${inv.client}\nDate: ${inv.date}\nPrevious Arrears: ${formatMoneyForHistory(inv.previousArrears,inv.currency)}\nCurrent Bill: ${formatMoneyForHistory(inv.currentBill,inv.currency)}\nTotal Due: ${formatMoneyForHistory(inv.totalDue,inv.currency)}\nPayment: ${formatMoneyForHistory(inv.paymentReceived,inv.currency)}\nNew Balance: ${formatMoneyForHistory(inv.newBalance,inv.currency)}`); };
+
+  function emailCurrentInvoice(){
+    if(!isPro){ showToast('Pro feature: Unlock Pro to send email invoices.','error'); return; }
+    let d=getCurrentInvoiceData();
+    let subject=`Invoice ${d.invNumber} from Finora`;
+    let body=`Dear ${d.client},\n\nInvoice Details:\nPrevious Arrears: ${formatMoney(d.previousArrears)}\nCurrent Bill: ${formatMoney(d.currentBill)}\nTotal Due: ${formatMoney(d.totalDue)}\nPayment Received: ${formatMoney(d.paymentReceived)}\nNew Balance: ${formatMoney(Math.abs(d.newBalance))}\n\nThank you for your business.\n\nFinora`;
+    window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     showToast('Email client opened');
   }
 
-  // Generate invoice button
-  document.getElementById('generateInvoiceBtn').onclick = () => {
-    if (!canUseFeature()) { showToast('Free trial limit reached. Sign up to continue.', 'error'); return; }
-    incrementUsage();
-    generateInvoicePreview();
-    saveCurrentInvoice(); // auto-save to history
-    showToast('✨ Invoice generated and saved!');
-  };
-
-  // PDF download (watermark removal if Pro)
-  document.getElementById('downloadPdfBtn').onclick = async () => {
-    if (!canUseFeature() && !isLoggedIn) { showToast('Sign up to download invoices', 'error'); return; }
-    if (!isLoggedIn) incrementUsage();
-    const element = document.getElementById('invoicePreviewContainer');
-    try {
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-      pdf.save(`Finora_${getCurrentInvoiceData().invNumber}.pdf`);
-      showToast('✅ PDF downloaded');
-    } catch(e) { showToast('Error generating PDF', 'error'); }
-  };
-
-  document.getElementById('emailInvoiceBtn').onclick = emailCurrentInvoice;
+  document.getElementById('generateInvoiceBtn').onclick=()=>{ if(!canUseFeature()){ showToast('Free trial limit reached. Sign up to continue.','error'); return; } incrementUsage(); generateInvoicePreview(); saveCurrentInvoice(); showToast('✨ Invoice generated and saved!'); };
+  document.getElementById('downloadPdfBtn').onclick=async()=>{ if(!canUseFeature()&&!isLoggedIn){ showToast('Sign up to download invoices','error'); return; } if(!isLoggedIn) incrementUsage(); const el=document.getElementById('invoicePreviewContainer'); try{ const canvas=await html2canvas(el,{scale:2}); const img=canvas.toDataURL('image/png'); const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4'); pdf.addImage(img,'PNG',10,10,190,0); pdf.save(`Finora_${getCurrentInvoiceData().invNumber}.pdf`); showToast('✅ PDF downloaded'); } catch(e){ showToast('Error generating PDF','error'); } };
+  document.getElementById('emailInvoiceBtn').onclick=emailCurrentInvoice;
 
   // Expense tracker
-  document.getElementById('addExpenseBtn').onclick = () => {
-    let type = document.getElementById('expenseType').value;
-    let desc = document.getElementById('expenseDesc').value;
-    let amount = parseFloat(document.getElementById('expenseAmount').value);
-    let date = document.getElementById('expenseDate').value || new Date().toISOString().slice(0,10);
-    if (!desc || isNaN(amount)) { showToast('Fill description and amount', 'error'); return; }
-    transactions.push({ type, desc, amount, date });
-    localStorage.setItem('finora_transactions', JSON.stringify(transactions));
-    updateDashboard();
-    showToast(`${type} added!`);
-    document.getElementById('expenseDesc').value = '';
-    document.getElementById('expenseAmount').value = '';
-  };
+  document.getElementById('addExpenseBtn').onclick=()=>{ let type=document.getElementById('expenseType').value, desc=document.getElementById('expenseDesc').value, amt=parseFloat(document.getElementById('expenseAmount').value), date=document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10); if(!desc||isNaN(amt)){ showToast('Fill description and amount','error'); return; } transactions.push({type,desc,amount:amt,date}); localStorage.setItem('finora_transactions',JSON.stringify(transactions)); updateDashboard(); showToast(`${type} added!`); document.getElementById('expenseDesc').value=''; document.getElementById('expenseAmount').value=''; };
 
-  function updateDashboard() {
-    let inc = 0, exp = 0;
-    transactions.forEach(t => { if (t.type === 'Income') inc += t.amount; else exp += t.amount; });
-    document.getElementById('totalIncome').innerText = inc;
-    document.getElementById('totalExpense').innerText = exp;
-    document.getElementById('netBalance').innerText = (inc - exp);
-    let list = document.getElementById('transactionsList');
-    if (transactions.length) {
-      list.innerHTML = transactions.slice().reverse().map(t => `<div class="flex justify-between border-b pb-2"><span>${t.desc}</span><span class="${t.type === 'Income' ? 'text-green-600' : 'text-red-600'}">${t.type === 'Income' ? '+' : '-'}$${t.amount}</span><span class="text-xs text-gray-400">${t.date}</span></div>`).join('');
-    } else { list.innerHTML = '<p class="text-gray-400 text-center py-4">No transactions yet</p>'; }
+  function updateDashboard(){
+    let inc=0,exp=0; transactions.forEach(t=>{ if(t.type==='Income') inc+=t.amount; else exp+=t.amount; });
+    document.getElementById('totalIncomeDisplay').innerHTML=formatMoney(inc);
+    document.getElementById('totalExpenseDisplay').innerHTML=formatMoney(exp);
+    document.getElementById('netBalanceDisplay').innerHTML=formatMoney(inc-exp);
+    let list=document.getElementById('transactionsList');
+    if(transactions.length) list.innerHTML=transactions.slice().reverse().map(t=>`<div class="flex justify-between border-b pb-2"><span>${t.desc}</span><span class="${t.type==='Income'?'text-green-600':'text-red-600'}">${t.type==='Income'?'+':'-'}${formatMoney(t.amount)}</span><span class="text-xs text-gray-400">${t.date}</span></div>`).join('');
+    else list.innerHTML='<p class="text-gray-400 text-center py-4">No transactions yet</p>';
   }
 
-  // Tab switching
-  let btns = document.querySelectorAll('.tab-btn');
-  let panels = { dashboard: document.getElementById('dashboardPanel'), invoice: document.getElementById('invoicePanel'), history: document.getElementById('historyPanel'), pricing: document.getElementById('pricingPanel') };
-  btns.forEach(btn => {
-    btn.onclick = () => {
-      let tab = btn.getAttribute('data-tab');
-      Object.values(panels).forEach(p => p?.classList.add('hidden'));
-      if (panels[tab]) panels[tab].classList.remove('hidden');
-      btns.forEach(b => { b.classList.remove('bg-indigo-600','text-white'); b.classList.add('bg-white','text-gray-600'); });
-      btn.classList.remove('bg-white','text-gray-600'); btn.classList.add('bg-indigo-600','text-white');
-      if (tab === 'dashboard') updateDashboard();
-      if (tab === 'invoice') generateInvoicePreview();
-      if (tab === 'history') renderInvoiceHistory();
-    };
-  });
+  // Currency change listener
+  document.getElementById('currencySelect').addEventListener('change',()=>{ generateInvoicePreview(); updateDashboard(); });
 
-  // Initial load
-  updateTrialUI();
-  updateDashboard();
-  generateInvoicePreview();
-  renderInvoiceHistory();
+  // Tab switching
+  let btns=document.querySelectorAll('.tab-btn');
+  let panels={dashboard:document.getElementById('dashboardPanel'),invoice:document.getElementById('invoicePanel'),history:document.getElementById('historyPanel'),pricing:document.getElementById('pricingPanel')};
+  btns.forEach(btn=>{ btn.onclick=()=>{ let tab=btn.getAttribute('data-tab'); Object.values(panels).forEach(p=>p?.classList.add('hidden')); if(panels[tab]) panels[tab].classList.remove('hidden'); btns.forEach(b=>{ b.classList.remove('bg-indigo-600','text-white'); b.classList.add('bg-white','text-gray-600'); }); btn.classList.remove('bg-white','text-gray-600'); btn.classList.add('bg-indigo-600','text-white'); if(tab==='dashboard') updateDashboard(); if(tab==='invoice') generateInvoicePreview(); if(tab==='history') renderInvoiceHistory(); }; });
+
+  updateTrialUI(); updateDashboard(); generateInvoicePreview(); renderInvoiceHistory();
 </script>
 </body>
 </html>
